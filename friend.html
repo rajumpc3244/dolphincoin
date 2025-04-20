@@ -1,21 +1,100 @@
-<script>
-  var chatId = "<?php echo isset($_GET['chat_id']) ? htmlspecialchars($_GET['chat_id']) : ''; ?>";
 
-  document.getElementById('inviteButton').addEventListener('click', function() {
-    const textToCopy = "https://t.me/share/url?url=https://t.me/dolphincoinearning_bot?start=" + chatId + "&text=Join%20me%20in%20DolphinCoin%20and%20start%20earning%20today!%20Let’s%20earn%20together!";
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dolphin Coin Referral</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
 
-    navigator.clipboard.writeText(textToCopy).then(function() {
-      const copyMessage = document.getElementById('copyMessage');
-      copyMessage.classList.remove('hidden');
-      copyMessage.classList.add('block');
+    .container {
+      padding: 30px;
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #1e293b;
+      color: white;
+      border-radius: 12px;
+      margin-top: 50px;
+      text-align: center;
+    }
 
-      setTimeout(function() {
-        copyMessage.classList.remove('block');
-        copyMessage.classList.add('hidden');
-        window.location = "https://t.me/share/url?url=https://t.me/dolphincoinearning_bot?start=" + chatId + "&text=Join%20me%20in%20DolphinCoin%20and%20start%20earning%20today!%20Let’s%20earn%20together!";
-      }, 2000);
-    }).catch(function(err) {
-      console.error('Error in copying text: ', err);
+    .invite-box {
+      background-color: #334155;
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .invite-box img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .btn {
+      padding: 15px;
+      width: 100%;
+      background-color: #475569;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #64748b;
+    }
+
+    #copyMessage {
+      color: #22c55e;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>🐬 Invite Friends to DolphinCoin</h2>
+    <p>You and your friend will receive bonuses</p>
+
+    <div class="invite-box">
+      <img src="https://img.icons8.com/color/48/gift.png" alt="gift">
+      <span><strong>Invite a friend</strong><br>+5,000 for you and your friend</span>
+    </div>
+
+    <button id="inviteButton" class="btn">Invite a Friend</button>
+    <p id="copyMessage">Copy Success..!</p>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatId = urlParams.get('chat_id') || "defaultuser";
+
+    document.getElementById('inviteButton').addEventListener('click', function () {
+      const referralLink = `https://t.me/share/url?url=https://t.me/dolphincoinearning_bot?start=ref${chatId}&text=Join%20me%20in%20DolphinCoin%20and%20start%20earning%20today!%20Let's%20earn%20together!`;
+
+      navigator.clipboard.writeText(referralLink).then(function () {
+        const copyMessage = document.getElementById('copyMessage');
+        copyMessage.style.display = 'block';
+
+        setTimeout(function () {
+          copyMessage.style.display = 'none';
+          window.location = referralLink;
+        }, 2000);
+      }).catch(function (err) {
+        console.error('Error copying referral link:', err);
+      });
     });
-  });
-</script>
+  </script>
+
+</body>
+</html>

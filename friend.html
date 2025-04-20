@@ -1,66 +1,21 @@
+<script>
+  var chatId = "<?php echo isset($_GET['chat_id']) ? htmlspecialchars($_GET['chat_id']) : ''; ?>";
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Telegram Bot Referral Script</title>
-</head>
-<body>
-    <h2>Telegram Bot Python Script (Referral System)</h2>
-    <pre>
-from telegram.ext import Updater, CommandHandler
-from telegram import Update
-from telegram.ext.callbackcontext import CallbackContext
+  document.getElementById('inviteButton').addEventListener('click', function() {
+    const textToCopy = "https://t.me/share/url?url=https://t.me/dolphincoinearning_bot/dolphin?start=" + chatId + "&text=Join%20me%20in%20DolphinCoin%20and%20start%20earning%20today!%20Let’s%20earn%20together!";
 
-TOKEN = "7508207792:AAFxPSj1gqZTMW-DVeaJSXSjtRRl-sHpCiE"
+    navigator.clipboard.writeText(textToCopy).then(function() {
+      const copyMessage = document.getElementById('copyMessage');
+      copyMessage.classList.remove('hidden');
+      copyMessage.classList.add('block');
 
-# Simulated user database
-user_data = {}
-
-def start(update: Update, context: CallbackContext):
-    user = update.message.from_user
-    user_id = user.id
-    args = context.args  # Check if there's a referral code
-
-    if user_id not in user_data:
-        user_data[user_id] = {"coins": 0, "referred_by": None}
-
-        # Handle referral
-        if args:
-            ref_code = args[0]
-            ref_id = int(ref_code.replace("ref", ""))
-            if ref_id in user_data and ref_id != user_id:
-                user_data[user_id]["referred_by"] = ref_id
-                user_data[ref_id]["coins"] += 10  # reward
-                context.bot.send_message(chat_id=ref_id, text=f"🎉 You earned 10 coins for referring {user.first_name}!")
-
-    update.message.reply_text(f"👋 Welcome {user.first_name}!\n💰 You have {user_data[user_id]['coins']} coins.")
-
-def balance(update: Update, context: CallbackContext):
-    user_id = update.message.from_user.id
-    coins = user_data.get(user_id, {"coins": 0})["coins"]
-    update.message.reply_text(f"💼 Your current balance: {coins} coins.")
-
-def refer(update: Update, context: CallbackContext):
-    user = update.message.from_user
-    user_id = user.id
-    username = context.bot.username
-    referral_link = f"https://t.me/{username}?start=ref{user_id}"
-    update.message.reply_text(f"📢 Share this link with friends:\n{referral_link}\nYou’ll get 10 coins per referral!")
-
-def main():
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
-
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("balance", balance))
-    dp.add_handler(CommandHandler("refer", refer))
-
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
-    </pre>
-</body>
-</html>
+      setTimeout(function() {
+        copyMessage.classList.remove('block');
+        copyMessage.classList.add('hidden');
+        window.location = "https://t.me/share/url?url=https://t.me/dolphincoinearning_bot/dolphin?start=" + chatId + "&text=Join%20me%20in%20DolphinCoin%20and%20start%20earning%20today!%20Let’s%20earn%20together!";
+      }, 2000);
+    }).catch(function(err) {
+      console.error('Error in copying text: ', err);
+    });
+  });
+</script>

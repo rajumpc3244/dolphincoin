@@ -49,7 +49,33 @@
 </head>
 
 <body>
+    
+ <div class="min-h-screen bg-gradient-to-r from-[#C7913D] to-[#F1D06E] flex justify-center items-center p-3">
+        <div class="bg-gradient-to-r from-[#C7913D] to-[#F1D06E] rounded-3xl shadow-2xl p-4 w-full max-w-md text-white">
+            <div class="flex justify-between items-center mb-4 bg-slate-900/10 rounded-3xl shadow-xl">
+                <div class="flex items-center">
+                    <img src="./assets/images/logoo.jpg" width="40px" height="40px" alt="User Avatar" class="rounded-full mr-2">
+                    <span id="userName">Bota</span>
+                </div>
+                <button onclick="myFunction()" class="bg-600 p-2 rounded-full flex justify-between items-center bg-slate-900/10 hover:bg-slate-900/5 rounded-3xl">
+                    <span class="font-bold text-lg">2X Coins</span>
+                </button>
+            </div>
 
+            <script>
+                function myFunction() {
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function() {
+                        x.className = x.className.replace("show", "");
+                    }, 2000);
+                }
+            </script>
+
+            <div id="snackbar">
+                Coming Soon !!
+            </div>
+            
             <div class="flex justify-between items-center bg-slate-900/10 hover:bg-slate-900/5 p-2 rounded-3xl shadow-lg">
                 <button class="flex-1 items-center p-2">
                     <a href="https://choadsoa.top/4/9229671">

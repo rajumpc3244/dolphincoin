@@ -262,6 +262,12 @@
                 localStorage.setItem('lastVisitDate', today);
             }
             
+            // Load main balance from localStorage
+            const savedBalance = localStorage.getItem('mainBalance');
+            if (savedBalance) {
+                document.getElementById('score').textContent = savedBalance;
+            }
+            
             updateDailyProgress();
         }
         
@@ -354,7 +360,11 @@
             
             // Update balance
             const currentBalance = parseInt(document.getElementById('score').textContent) || 0;
-            document.getElementById('score').textContent = currentBalance + reward;
+            const newBalance = currentBalance + reward;
+            document.getElementById('score').textContent = newBalance;
+            
+            // Save balance to localStorage
+            localStorage.setItem('mainBalance', newBalance);
             
             // Update daily progress
             updateDailyProgress();

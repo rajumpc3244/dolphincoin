@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,107 +8,55 @@
     <link rel="stylesheet" href="./assets/css/style-2.css">
     <link rel="stylesheet" href="./assets/css/responsive-1.css">
     <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
-    <link rel="icon" type="image/png" href="./assets/images/favicon-16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="./assets/images/favicon-32x32.png" sizes="32x32">
-    <link rel="apple-touch-icon" href="./assets/images/favicon/apple-touch-icon.png">
-    <link rel="android-chrome-192x192" href="./assets/images/android-chrome-192x192.png" sizes="192x192">
-    <link rel="android-chrome-512x512" href="./assets/images/android-chrome-512x512.png" sizes="512x512">
-    <script src="./assets/3.4.5"></script>
-    <link rel="stylesheet" href="npm/swiper%4011/swiper-bundle.min.css">
+    <!-- Monetag Ads Script -->
+<script src='//whephiwums.com/sdk.js' data-zone='9237110' data-sdk='show_9237110'></script>
     <style>
-        * {
-            user-select: none;
-        }
-
-        @keyframes slide-up {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .slide-up {
-            animation: slide-up 0.5s ease-out;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 120px;
-            background-color: black;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        #task {
+        /* Your existing styles... */
+        
+        .task-button {
             border: 2px solid aqua;
             border-radius: 1em;
             margin: 10px;
-            padding: 10px;
-            height: 5% ;
-        }
-
-        /* Make the Swiper container vertical */
-        .swiper {
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 255, 255, 0.1);
             display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            max-height: 10px; /* Adjust the height as needed */
-        }
-
-        .swiper-slide {
-            margin-bottom: 10px;
-            display: block;
-            max-height: 200px;
-        }
-
-        .boosters-button-detail {
-            display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: space-between;
         }
-
-        .boosters-button-data {
-            margin-top: 10px;
+        
+        .task-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-3px);
         }
-
-        /* Make it responsive on mobile */
-        @media (max-width: 768px) {
-            .swiper {
-                max-height: 100%; /* Ensure it takes full height on mobile */
-                flex-direction: column;
-            }
-            .swiper-slide {
-                margin-bottom: 15px; /* Add more spacing between items */
-            }
+        
+        .task-button.completed {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .task-button.completed h4 {
+            color: #4CAF50;
+        }
+        
+        .task-button.completed h5 {
+            color: #4CAF50;
+        }
+        
+        .ad-container {
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        #adDisplay {
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -126,73 +74,191 @@
     <div class="user-balance ml-4 mr-4 bg-slate-900 rounded-3xl shadow-lg p-4 mt-2">
         <div class="balance-coins">
             <img src="./assets/images/pc.png" width="50px" alt="">
-            <span id="score"><?php echo $information["balanse"]; ?></span>
+            <span id="score">0</span>
         </div>
         <div class="balance-title">
-            <span class="select-none text-center">Do the tasks to mine more coins</span>
+            <span class="select-none text-center">Complete tasks to earn coins</span>
             <hr class="mt-2">
         </div>
+    </div>
+
+    <!-- Ad Container -->
+    <div class="ad-container hidden" id="adContainer">
+        <h4>Watch this ad to complete your task</h4>
+        <div id="adDisplay"></div>
+        <button class="btn btn-primary mt-2 hidden" id="continueBtn">Continue to Task</button>
     </div>
 
     <div class="buy-skins">
         <div class="boosters-title" style="padding: 0 1.25rem">
             <h2 class="select-none text-2xl">Tasks</h2>
         </div>
-        <div class="swiper skinSwiper">
-            <div class="swiper-wrapper">
-                <!-- First Task -->
-                <div class="swiper-slide slide">
-                    <div class="skin-button m-b-1" id="coin">
-                        <div class="boosters-button-detail">
-                            <a href="https://t.me/dolphincoinearning">
-                                <div class="boosters-button-image" id="coin">
-                                    <img src="./assets/images/youtube.png" width="50px" alt="Character" onclick="startVibration()">
-                                </div>
-                                <div>
-                                    <h4 class="tooltip">Subscribe Seller Alex
-                                        <span class="tooltiptext">Daily bonus with unique rewards</span>
-                                    </h4>
-                                    <div class="boosters-button-data">
-                                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
-                                        <h5>50,000  claim now </h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+        
+        <!-- Task 1 -->
+        <div class="task-button" id="task1" onclick="showAd('task1')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/youtube.png" width="50px" alt="YouTube">
+                </div>
+                <div class="ml-3">
+                    <h4>Subscribe to Alex</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>5,000 coins</h5>
                     </div>
                 </div>
-                <!-- Second Task -->
-                <div class="swiper-slide slide">
-                    <div class="skin-button m-b-1" id="coin">
-                        <div class="boosters-button-detail">
-                            <a href="https://t.me/dolphincoinearning">
-                                <div class="boosters-button-image" id="coin">
-                                    <img src="./assets/images/telegram.png" width="50px" alt="Character" onclick="startVibration()">
-                                </div>
-                                <div>
-                                    <h4 class="tooltip">Join Community
-                                        <span class="tooltiptext">Daily bonus with unique rewards</span>
-                                    </h4>
-                                    <div class="boosters-button-data">
-                                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
-                                        <h5>50,000  claim now </h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 2 -->
+        <div class="task-button" id="task2" onclick="showAd('task2')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/telegram.png" width="50px" alt="Telegram">
+                </div>
+                <div class="ml-3">
+                    <h4>Join Community</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>5,000 coins</h5>
                     </div>
                 </div>
-    <!-- Notifications and other scripts -->
-    <script src="npm/swiper%4011/swiper-bundle.min.js"></script>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 3 -->
+        <div class="task-button" id="task3" onclick="showAd('task3')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/twitter.png" width="50px" alt="Twitter">
+                </div>
+                <div class="ml-3">
+                    <h4>Follow on Twitter</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>3,000 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 4 -->
+        <div class="task-button" id="task4" onclick="showAd('task4')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/instagram.png" width="50px" alt="Instagram">
+                </div>
+                <div class="ml-3">
+                    <h4>Follow on Instagram</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>3,000 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 5 -->
+        <div class="task-button" id="task5" onclick="showAd('task5')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/website.png" width="50px" alt="Website">
+                </div>
+                <div class="ml-3">
+                    <h4>Task 04</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>2,000 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+    </div>
+
     <script>
-        // Initialize Swiper with vertical layout
-        var swiper = new Swiper(".skinSwiper", {
-            direction: "vertical", // Set direction to vertical
-            slidesPerView: 1,
-            spaceBetween: 10,
-            grabCursor: true,
+        // Track completed tasks
+        const completedTasks = {};
+        
+        // Function to show ad for a task
+        function showAd(taskId) {
+            // Don't show ad if task already completed
+            if (completedTasks[taskId]) return;
+            
+            // Show ad container
+            document.getElementById('adContainer').classList.remove('hidden');
+            
+            // Load Monetag ad
+            const adDisplay = document.getElementById('adDisplay');
+            adDisplay.innerHTML = '';
+            
+            // Create Monetag ad script
+            const script = document.createElement('script');
+            script.src = 'https://s.monetag.com/tag?publisher_id=YOUR_PUBLISHER_ID';
+            adDisplay.appendChild(script);
+            
+            // Show continue button after delay (simulating ad completion)
+            setTimeout(() => {
+                document.getElementById('continueBtn').classList.remove('hidden');
+            }, 30000); // 30 seconds for ad completion
+            
+            // Set current task
+            document.getElementById('continueBtn').onclick = function() {
+                completeTask(taskId);
+            };
+        }
+        
+        // Function to complete a task
+        function completeTask(taskId) {
+            // Mark task as completed
+            completedTasks[taskId] = true;
+            const taskElement = document.getElementById(taskId);
+            taskElement.classList.add('completed');
+            taskElement.querySelector('.status-icon').textContent = '✓';
+            
+            // Hide ad container
+            document.getElementById('adContainer').classList.add('hidden');
+            document.getElementById('continueBtn').classList.add('hidden');
+            
+            // Calculate reward based on task
+            let reward = 0;
+            switch(taskId) {
+                case 'task1': reward = 50000; break;
+                case 'task2': reward = 50000; break;
+                case 'task3': reward = 30000; break;
+                case 'task4': reward = 30000; break;
+                case 'task5': reward = 20000; break;
+            }
+            
+            // Update balance
+            const currentBalance = parseInt(document.getElementById('score').textContent) || 0;
+            document.getElementById('score').textContent = currentBalance + reward;
+            
+            // Show completion message
+            alert(`Task completed! You earned ${reward} coins!`);
+            
+            // In a real implementation, you would send this to your backend
+            // fetch('/complete-task', {
+            //     method: 'POST',
+            //     body: JSON.stringify({ taskId, userId }),
+            //     headers: { 'Content-Type': 'application/json' }
+            // });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close ad container when clicking outside
+            document.getElementById('adContainer').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    document.getElementById('continueBtn').classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>
-
 </html>

@@ -88,6 +88,28 @@
         .select-none { user-select: none; }
         .text-center { text-align: center; }
         .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        
+        /* New styles for daily progress */
+        .daily-progress {
+            background: rgba(0, 0, 0, 0.2);
+            height: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffaa, #00aaff);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 
@@ -109,6 +131,16 @@
         <div class="balance-title">
             <span class="select-none text-center">Complete tasks to earn coins</span>
             <hr class="mt-2">
+        </div>
+    </div>
+
+    <!-- Daily Progress -->
+    <div class="ml-4 mr-4 bg-slate-900 rounded-3xl shadow-lg p-4 mt-2">
+        <div class="progress-text">
+            <span id="dailyProgressText">Daily Progress: 0/50</span>
+        </div>
+        <div class="daily-progress">
+            <div class="progress-bar" id="dailyProgressBar"></div>
         </div>
     </div>
 
@@ -214,9 +246,57 @@
         // Track completed tasks
         const completedTasks = {};
         let currentTaskId = null;
+        const MAX_DAILY_TASKS = 50;
+        
+        // Initialize daily task system
+        function initDailyTasks() {
+            const today = new Date().toDateString();
+            const lastVisit = localStorage.getItem('lastVisitDate');
+            const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+            
+            // Reset if it's a new day and previous day was completed
+            if (lastVisit !== today) {
+                if (dailyCount >= MAX_DAILY_TASKS) {
+                    localStorage.setItem('dailyTaskCount', 0);
+                }
+                localStorage.setItem('lastVisitDate', today);
+            }
+            
+            updateDailyProgress();
+        }
+        
+        // Update daily progress display
+        function updateDailyProgress() {
+            const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+            const progressPercent = (dailyCount / MAX_DAILY_TASKS) * 100;
+            
+            document.getElementById('dailyProgressBar').style.width = `${progressPercent}%`;
+            document.getElementById('dailyProgressText').textContent = `Daily Progress: ${dailyCount}/${MAX_DAILY_TASKS}`;
+            
+            // Disable all tasks if daily limit reached
+            if (dailyCount >= MAX_DAILY_TASKS) {
+                document.querySelectorAll('.task-button').forEach(button => {
+                    button.style.opacity = '0.6';
+                    button.style.cursor = 'not-allowed';
+                    button.onclick = null;
+                });
+            } else {
+                document.querySelectorAll('.task-button').forEach(button => {
+                    button.style.opacity = '1';
+                    button.style.cursor = 'pointer';
+                });
+            }
+        }
         
         // Function to start a task (show ad first)
         function startTask(taskId) {
+            // Check daily task limit
+            const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+            if (dailyCount >= MAX_DAILY_TASKS) {
+                alert("You've completed all daily tasks! Come back tomorrow for more.");
+                return;
+            }
+            
             // Don't proceed if task already completed
             if (completedTasks[taskId]) return;
             
@@ -253,6 +333,11 @@
             taskElement.classList.add('completed');
             taskElement.querySelector('.status-icon').textContent = '✓';
             
+            // Update daily task count
+            let dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+            dailyCount++;
+            localStorage.setItem('dailyTaskCount', dailyCount);
+            
             // Hide ad container
             document.getElementById('adContainer').classList.add('hidden');
             document.getElementById('continueBtn').classList.add('hidden');
@@ -271,22 +356,20 @@
             const currentBalance = parseInt(document.getElementById('score').textContent) || 0;
             document.getElementById('score').textContent = currentBalance + reward;
             
+            // Update daily progress
+            updateDailyProgress();
+            
             // Show completion message
-            alert(`Task completed! You earned ${reward} coins!`);
+            alert(`Task completed! You earned ${reward} coins! (${dailyCount}/${MAX_DAILY_TASKS} today)`);
             
             // Reset current task
             currentTaskId = null;
-            
-            // In a real implementation, you would send this to your backend
-            // fetch('/complete-task', {
-            //     method: 'POST',
-            //     body: JSON.stringify({ taskId, userId }),
-            //     headers: { 'Content-Type': 'application/json' }
-            // });
         }
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            initDailyTasks();
+            
             // Close ad container when clicking outside
             document.getElementById('adContainer').addEventListener('click', function(e) {
                 if (e.target === this) {

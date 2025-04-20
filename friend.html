@@ -9,10 +9,9 @@
       height: 100%;
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #f0f8ff;
+      background-color: #f0f0f0;
     }
-    .page {
-      display: none;
+    .container {
       padding: 30px;
       max-width: 500px;
       margin: 0 auto;
@@ -22,257 +21,205 @@
       margin-top: 50px;
       text-align: center;
     }
-    .active-page {
-      display: block;
-    }
-    .logo {
-      width: 80px;
-      height: 80px;
+    .invite-box {
+      background-color: #334155;
+      padding: 20px;
+      border-radius: 20px;
       margin-bottom: 20px;
+    }
+    .invite-box img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+      vertical-align: middle;
     }
     .btn {
       padding: 15px;
       width: 100%;
-      background-color: #3b82f6;
+      background-color: #475569;
       color: white;
       font-size: 18px;
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      margin-top: 20px;
     }
-    .btn-share {
-      background-color: #22c55e;
+    .btn:hover {
+      background-color: #64748b;
     }
-    .bonus-info {
-      background-color: #334155;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 20px 0;
-    }
-    .stats {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 30px;
-    }
-    .stat-box {
-      background-color: #334155;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      flex: 1;
-      margin: 0 5px;
-    }
-    .referral-link {
-      background-color: #334155;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      word-break: break-all;
-    }
-    .recent-refs {
-      margin-top: 30px;
-    }
-    .ref-item {
-      background-color: #334155;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-    }
-    #copyMessage, #successMessage {
+    #copyMessage {
       color: #22c55e;
       margin-top: 15px;
       display: none;
     }
-    .success-icon {
-      font-size: 60px;
-      color: #22c55e;
-      margin-bottom: 20px;
+    .balance-display {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+    .recent-referrals {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .referral-item {
+      background-color: #334155;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Landing Page -->
-  <div id="landingPage" class="page active-page">
-    <img src="https://img.icons8.com/color/96/dolphin.png" alt="Dolphin Coin" class="logo">
-    <h1>Welcome to Dolphin Coin!</h1>
+  <div class="container">
+    <h2>🐬 DolphinCoin Referral System</h2>
     
-    <div class="bonus-info">
-      <h3>🎁 Referral Bonus</h3>
-      <p id="referralOffer">Sign up now to start earning!</p>
+    <!-- Balance Display -->
+    <div class="balance-display">
+      Your Balance: <span id="userBalance">0</span> coins
     </div>
-    
-    <button id="joinButton" class="btn">Join Dolphin Coin</button>
-    <p id="copyMessage">Redirecting to Telegram...</p>
-  </div>
 
-  <!-- Dashboard Page -->
-  <div id="dashboardPage" class="page">
-    <h1>🐬 Referral Dashboard</h1>
-    
-    <div class="stats">
-      <div class="stat-box">
-        <h3>Total Referrals</h3>
-        <p id="totalRefs">0</p>
-      </div>
-      <div class="stat-box">
-        <h3>Earned Bonus</h3>
-        <p id="totalBonus">0</p>
-      </div>
+    <!-- Referral Section -->
+    <div class="invite-box">
+      <img src="https://img.icons8.com/color/48/gift.png" alt="gift">
+      <span><strong>Invite a friend</strong><br>+5,000 for you and your friend</span>
     </div>
-    
-    <h3>Your Referral Link</h3>
-    <div class="referral-link" id="refLink">
-      Loading...
-    </div>
-    
-    <button id="copyBtn" class="btn">Copy Referral Link</button>
-    <button id="shareBtn" class="btn btn-share">Share on Telegram</button>
-    <p id="dashboardMessage">Link copied to clipboard!</p>
-    
-    <div class="recent-refs">
+
+    <button id="inviteButton" class="btn">Invite a Friend</button>
+    <p id="copyMessage">Copied to clipboard!</p>
+
+    <!-- Recent Referrals -->
+    <div class="recent-referrals" id="recentReferrals" style="display: none;">
       <h3>Recent Referrals</h3>
-      <div id="refList">
-        <p>No referrals yet</p>
-      </div>
+      <div id="referralList"></div>
     </div>
-  </div>
-
-  <!-- Success Page -->
-  <div id="successPage" class="page">
-    <div class="success-icon">✓</div>
-    <h1>Referral Successful!</h1>
-    <p>You and your friend have both received 5,000 bonus coins.</p>
-    <p>Your new balance: <strong id="newBalance">15,000 coins</strong></p>
-    
-    <button id="dashboardBtn" class="btn">Go to Referral Dashboard</button>
-    <button id="inviteMoreBtn" class="btn btn-share">Invite More Friends</button>
   </div>
 
   <script>
-    // Global variables
-    let userId = "";
-    let refCode = "";
-    let balance = 0;
-    
+    // Initialize user data
+    let userData = {
+      id: '',
+      balance: 0,
+      referrals: []
+    };
+
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    const chatId = urlParams.get('chat_id') || "user_" + Math.random().toString(36).substr(2, 9);
+
     // Initialize the page
-    function init() {
-      // Get URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      refCode = urlParams.get('ref') || '';
-      userId = localStorage.getItem('dolphin_user_id') || "USER_" + Math.floor(Math.random() * 10000);
-      balance = parseInt(localStorage.getItem('dolphin_balance')) || 0;
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load user data from localStorage or initialize
+      loadUserData();
       
-      // If coming from Telegram with start parameter
-      const startParam = urlParams.get('start');
-      if (startParam && startParam.startsWith('ref_')) {
-        processReferral(startParam.replace('ref_', ''));
-        showPage('successPage');
-      } else if (localStorage.getItem('dolphin_user_id')) {
-        showPage('dashboardPage');
-        loadDashboard();
-      } else if (refCode) {
-        document.getElementById('referralOffer').textContent = 
-          "You're joining with a referral link! Both you and your friend will receive 5,000 bonus coins.";
+      // Check if coming from referral
+      if (refCode && refCode !== userData.id) {
+        processReferral(refCode);
+      }
+      
+      // Update UI
+      updateUI();
+    });
+
+    // Load or initialize user data
+    function loadUserData() {
+      const savedData = localStorage.getItem('dolphinCoinUserData');
+      if (savedData) {
+        userData = JSON.parse(savedData);
+      } else {
+        userData = {
+          id: chatId,
+          balance: 0,
+          referrals: []
+        };
+        saveUserData();
       }
     }
-    
-    // Show specific page and hide others
-    function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active-page');
-      });
-      document.getElementById(pageId).classList.add('active-page');
+
+    // Save user data
+    function saveUserData() {
+      localStorage.setItem('dolphinCoinUserData', JSON.stringify(userData));
     }
-    
-    // Process referral
+
+    // Process a new referral
     function processReferral(referrerId) {
-      if (referrerId && referrerId !== userId) {
-        // In a real app, this would call your backend
-        balance += 5000;
-        localStorage.setItem('dolphin_balance', balance);
-        localStorage.setItem('dolphin_user_id', userId);
+      // Check if this is a new referral
+      if (!userData.referrals.some(ref => ref.referrer === referrerId)) {
+        // Add bonus to current user
+        userData.balance += 5000;
         
-        // Record the referral (simulated)
-        let referrals = JSON.parse(localStorage.getItem('dolphin_referrals') || []);
-        referrals.push({
-          id: "USER_" + Math.floor(Math.random() * 10000),
-          date: new Date().toLocaleDateString(),
+        // Add bonus to referrer (simulated - in real app this would be server-side)
+        // Note: In a real app, you would need server-side code to update referrer's balance
+        
+        // Record the referral
+        userData.referrals.push({
+          referrer: referrerId,
+          date: new Date().toLocaleString(),
           bonus: 5000
         });
-        localStorage.setItem('dolphin_referrals', JSON.stringify(referrals));
         
-        document.getElementById('newBalance').textContent = balance.toLocaleString() + " coins";
+        saveUserData();
+        updateUI();
+        
+        // Show success message
+        alert("Welcome bonus of 5,000 coins added to your account!");
       }
     }
-    
-    // Load dashboard data
-    function loadDashboard() {
-      const refLink = `${window.location.origin}${window.location.pathname}?ref=${userId}`;
-      document.getElementById('refLink').textContent = refLink;
+
+    // Update the UI
+    function updateUI() {
+      // Update balance
+      document.getElementById('userBalance').textContent = userData.balance.toLocaleString();
       
-      // Load stats (simulated)
-      let referrals = JSON.parse(localStorage.getItem('dolphin_referrals') || [];
-      document.getElementById('totalRefs').textContent = referrals.length;
-      document.getElementById('totalBonus').textContent = (referrals.length * 5000).toLocaleString();
-      
-      // Load recent referrals
-      const refList = document.getElementById('refList');
-      if (referrals.length > 0) {
-        refList.innerHTML = referrals.slice(0, 3).map(ref => `
-          <div class="ref-item">
-            <span>${ref.id}</span>
-            <span>+${ref.bonus.toLocaleString()}</span>
-          </div>
-        `).join('');
+      // Show recent referrals if any
+      if (userData.referrals.length > 0) {
+        document.getElementById('recentReferrals').style.display = 'block';
+        const referralList = document.getElementById('referralList');
+        referralList.innerHTML = '';
+        
+        userData.referrals.slice(0, 5).forEach(ref => {
+          const item = document.createElement('div');
+          item.className = 'referral-item';
+          item.innerHTML = `
+            <div>From: ${ref.referrer}</div>
+            <div>Date: ${ref.date}</div>
+            <div>Bonus: +${ref.bonus.toLocaleString()} coins</div>
+          `;
+          referralList.appendChild(item);
+        });
       }
     }
-    
-    // Event listeners
-    document.getElementById('joinButton').addEventListener('click', function() {
-      const telegramLink = `https://t.me/dolphincoinearning_bot?start=ref_${refCode || userId}`;
+
+    // Handle invite button click
+    document.getElementById('inviteButton').addEventListener('click', function() {
+      const referralLink = `https://t.me/share/url?url=https://t.me/dolphincoinearning_bot?start=ref${userData.id}&text=Join%20me%20in%20DolphinCoin%20and%20start%20earning%20today!%20Get%205,000%20bonus%20coins!`;
       
-      navigator.clipboard.writeText(telegramLink).then(function() {
-        document.getElementById('copyMessage').style.display = 'block';
+      navigator.clipboard.writeText(referralLink).then(function() {
+        const copyMessage = document.getElementById('copyMessage');
+        copyMessage.style.display = 'block';
+        
         setTimeout(function() {
-          window.location.href = telegramLink;
-        }, 1000);
+          copyMessage.style.display = 'none';
+          window.location = referralLink;
+        }, 2000);
       }).catch(function(err) {
-        console.error('Error copying link:', err);
-        window.location.href = telegramLink;
+        console.error('Error copying referral link:', err);
+        window.location = referralLink;
       });
     });
-    
-    document.getElementById('copyBtn').addEventListener('click', function() {
-      const refLink = document.getElementById('refLink').textContent;
-      navigator.clipboard.writeText(refLink).then(() => {
-        const message = document.getElementById('dashboardMessage');
-        message.style.display = 'block';
-        setTimeout(() => message.style.display = 'none', 2000);
-      });
-    });
-    
-    document.getElementById('shareBtn').addEventListener('click', function() {
-      const refLink = document.getElementById('refLink').textContent;
-      const shareText = `Join Dolphin Coin with my referral link and get 5,000 bonus coins! ${refLink}`;
-      window.open(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
-    });
-    
-    document.getElementById('dashboardBtn').addEventListener('click', function() {
-      showPage('dashboardPage');
-      loadDashboard();
-    });
-    
-    document.getElementById('inviteMoreBtn').addEventListener('click', function() {
-      showPage('dashboardPage');
-      loadDashboard();
-    });
-    
-    // Initialize the app
-    init();
+
+    // Simulate adding coins (for demo purposes)
+    function addCoins(amount) {
+      userData.balance += amount;
+      saveUserData();
+      updateUI();
+    }
   </script>
+
+  <!-- For demo purposes - remove in production -->
+  <div style="position: fixed; bottom: 10px; right: 10px; background: white; padding: 10px; border-radius: 5px;">
+    <button onclick="addCoins(1000)">Add 1,000 coins (demo)</button>
+    <button onclick="localStorage.removeItem('dolphinCoinUserData'); location.reload();">Reset Data</button>
+  </div>
+
 </body>
 </html>

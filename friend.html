@@ -29,6 +29,7 @@
       font-size: 24px;
       cursor: pointer;
       margin-right: 15px;
+      display: none; /* Hidden by default */
     }
     .page {
       display: none;
@@ -112,7 +113,7 @@
     .page-title {
       flex-grow: 1;
       text-align: center;
-      margin-right: 40px; /* To balance the back button space */
+      margin-right: 40px;
     }
   </style>
 </head>
@@ -187,6 +188,7 @@
     let refCode = "";
     let balance = 0;
     let pageHistory = [];
+    let currentPage = "landingPage";
     
     // Initialize the page
     function init() {
@@ -203,7 +205,6 @@
         showPage('successPage');
       } else if (localStorage.getItem('dolphin_user_id')) {
         showPage('dashboardPage');
-        loadDashboard();
       } else if (refCode) {
         document.getElementById('referralOffer').textContent = 
           "You're joining with a referral link! Both you and your friend will receive 5,000 bonus coins.";
@@ -211,14 +212,71 @@
       
       // Set up back button
       document.getElementById('backButton').addEventListener('click', goBack);
+      
+      // Set up other button click handlers
+      setupButtonHandlers();
+    }
+    
+    // Set up button click handlers
+    function setupButtonHandlers() {
+      document.getElementById('joinButton').addEventListener('click', function() {
+        const telegramLink = `https://t.me/dolphincoinearning_bot?start=ref_${refCode || userId}`;
+        copyAndRedirect(telegramLink);
+      });
+      
+      document.getElementById('copyBtn').addEventListener('click', function() {
+        const refLink = document.getElementById('refLink').textContent;
+        copyToClipboard(refLink, 'dashboardMessage');
+      });
+      
+      document.getElementById('shareBtn').addEventListener('click', function() {
+        const refLink = document.getElementById('refLink').textContent;
+        shareOnTelegram(refLink);
+      });
+      
+      document.getElementById('dashboardBtn').addEventListener('click', function() {
+        showPage('dashboardPage');
+      });
+      
+      document.getElementById('inviteMoreBtn').addEventListener('click', function() {
+        showPage('dashboardPage');
+      });
+    }
+    
+    // Copy text to clipboard and show message
+    function copyToClipboard(text, messageElementId) {
+      navigator.clipboard.writeText(text).then(() => {
+        const message = document.getElementById(messageElementId);
+        message.style.display = 'block';
+        setTimeout(() => message.style.display = 'none', 2000);
+      });
+    }
+    
+    // Copy and redirect to Telegram
+    function copyAndRedirect(telegramLink) {
+      navigator.clipboard.writeText(telegramLink).then(function() {
+        document.getElementById('copyMessage').style.display = 'block';
+        setTimeout(function() {
+          window.location.href = telegramLink;
+        }, 1000);
+      }).catch(function(err) {
+        console.error('Error copying link:', err);
+        window.location.href = telegramLink;
+      });
+    }
+    
+    // Share on Telegram
+    function shareOnTelegram(refLink) {
+      const shareText = `Join Dolphin Coin with my referral link and get 5,000 bonus coins! ${refLink}`;
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
     }
     
     // Show specific page and hide others
     function showPage(pageId) {
-      // Add current page to history before switching
-      const currentPage = document.querySelector('.page.active-page');
-      if (currentPage) {
-        pageHistory.push(currentPage.id);
+      // Don't add to history if we're already on this page
+      if (pageId !== currentPage) {
+        pageHistory.push(currentPage);
+        currentPage = pageId;
       }
       
       document.querySelectorAll('.page').forEach(page => {
@@ -228,6 +286,15 @@
       
       // Update page title
       updatePageTitle(pageId);
+      
+      // Show/hide back button (don't show on landing page)
+      document.getElementById('backButton').style.display = 
+        (pageId === 'landingPage') ? 'none' : 'block';
+      
+      // Load data if needed
+      if (pageId === 'dashboardPage') {
+        loadDashboard();
+      }
     }
     
     // Update page title in header
@@ -244,11 +311,8 @@
     function goBack() {
       if (pageHistory.length > 0) {
         const prevPageId = pageHistory.pop();
-        document.querySelectorAll('.page').forEach(page => {
-          page.classList.remove('active-page');
-        });
-        document.getElementById(prevPageId).classList.add('active-page');
-        updatePageTitle(prevPageId);
+        currentPage = prevPageId;
+        showPage(prevPageId);
       } else {
         // If no history, go to landing page
         showPage('landingPage');
@@ -295,48 +359,10 @@
             <span>+${ref.bonus.toLocaleString()}</span>
           </div>
         `).join('');
+      } else {
+        refList.innerHTML = '<p>No referrals yet</p>';
       }
     }
-    
-    // Event listeners
-    document.getElementById('joinButton').addEventListener('click', function() {
-      const telegramLink = `https://t.me/dolphincoinearning_bot?start=ref_${refCode || userId}`;
-      
-      navigator.clipboard.writeText(telegramLink).then(function() {
-        document.getElementById('copyMessage').style.display = 'block';
-        setTimeout(function() {
-          window.location.href = telegramLink;
-        }, 1000);
-      }).catch(function(err) {
-        console.error('Error copying link:', err);
-        window.location.href = telegramLink;
-      });
-    });
-    
-    document.getElementById('copyBtn').addEventListener('click', function() {
-      const refLink = document.getElementById('refLink').textContent;
-      navigator.clipboard.writeText(refLink).then(() => {
-        const message = document.getElementById('dashboardMessage');
-        message.style.display = 'block';
-        setTimeout(() => message.style.display = 'none', 2000);
-      });
-    });
-    
-    document.getElementById('shareBtn').addEventListener('click', function() {
-      const refLink = document.getElementById('refLink').textContent;
-      const shareText = `Join Dolphin Coin with my referral link and get 5,000 bonus coins! ${refLink}`;
-      window.open(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
-    });
-    
-    document.getElementById('dashboardBtn').addEventListener('click', function() {
-      showPage('dashboardPage');
-      loadDashboard();
-    });
-    
-    document.getElementById('inviteMoreBtn').addEventListener('click', function() {
-      showPage('dashboardPage');
-      loadDashboard();
-    });
     
     // Initialize the app
     init();

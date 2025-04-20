@@ -1,9 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="./assets/3.4.5"></script>
     <script src='//whephiwums.com/sdk.js' data-zone='9237110' data-sdk='show_9237110'></script>
     
@@ -11,27 +10,191 @@
     <link rel="stylesheet" href="./assets/css/style-2.css">
     <link rel="stylesheet" href="./assets/css/responsive-1.css">
 
-
     <style>
+        /* Responsive Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(to right, #C7913D, #F1D06E);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            background: linear-gradient(to right, #C7913D, #F1D06E);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.1);
+            border-radius: 24px;
+            padding: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
+        .double-coins-btn {
+            background: rgba(15, 23, 42, 0.1);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 24px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .double-coins-btn:hover {
+            background: rgba(15, 23, 42, 0.2);
+        }
+        
+        .free-coins-banner {
+            background: rgba(15, 23, 42, 0.1);
+            border-radius: 24px;
+            padding: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .balance-display {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .coin-image {
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+            margin-bottom: 5px;
+        }
+        
+        .score {
+            font-size: clamp(24px, 6vw, 36px);
+            font-weight: bold;
+            color: white;
+        }
+        
+        .clickable-coin {
+            width: 80%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        .energy-bar-container {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 24px;
+            padding: 12px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .energy-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .energy-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+        
+        .progress-container {
+            background: #3b4758;
+            border-radius: 12px;
+            height: 8px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #C7913D, #F1D06E);
+            border-radius: 12px;
+            transition: width 0.3s ease;
+        }
+        
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 24px;
+            padding: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        
+        .nav-icon {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 5px;
+        }
+        
+        /* Animations */
         .score-display {
-            font-size: 50px;
+            font-size: 24px;
             position: absolute;
             color: yellow;
             animation: fadeOut 1s forwards;
+            pointer-events: none;
+            z-index: 10;
         }
-
-@keyframes fadeOut {
+        
+        @keyframes fadeOut {
             to {
                 opacity: 0;
                 transform: translateY(-30px);
             }
         }
-
+        
         .shake {
             animation: shake 0.5s;
         }
-
-@keyframes shake {
+        
+        @keyframes shake {
             0%, 100% {
                 transform: translateX(0);
             }
@@ -45,282 +208,261 @@
                 transform: translateX(-5px);
             }
         }
+        
+        #snackbar {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 24px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+        }
+        
+        #snackbar.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 400px) {
+            .main-container {
+                padding: 15px;
+                border-radius: 20px;
+            }
+            
+            .header-bar, .free-coins-banner, .energy-bar-container, .bottom-nav {
+                padding: 10px;
+                border-radius: 20px;
+            }
+            
+            .nav-icon {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .coin-image {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .score {
+                font-size: clamp(20px, 8vw, 30px);
+            }
+        }
     </style>
 </head>
 
 <body>
-    
- <div class="min-h-screen bg-gradient-to-r from-[#C7913D] to-[#F1D06E] flex justify-center items-center p-3">
-        <div class="bg-gradient-to-r from-[#C7913D] to-[#F1D06E] rounded-3xl shadow-2xl p-4 w-full max-w-md text-white">
-            <div class="flex justify-between items-center mb-4 bg-slate-900/10 rounded-3xl shadow-xl">
-                <div class="flex items-center">
-                    <img src="./assets/images/logoo.jpg" width="40px" height="40px" alt="User Avatar" class="rounded-full mr-2">
-                    <span id="userName">Bota</span>
-                </div>
-                <button onclick="myFunction()" class="bg-600 p-2 rounded-full flex justify-between items-center bg-slate-900/10 hover:bg-slate-900/5 rounded-3xl">
-                    <span class="font-bold text-lg">2X Coins</span>
-                </button>
+    <div class="main-container">
+        <div class="header-bar">
+            <div class="user-info">
+                <img src="./assets/images/logoo.jpg" alt="User Avatar" class="user-avatar">
+                <span id="userName">Bota</span>
             </div>
+            <button onclick="myFunction()" class="double-coins-btn">
+                <span>2X Coins</span>
+            </button>
+        </div>
 
-            <script>
-                function myFunction() {
-                    var x = document.getElementById("snackbar");
-                    x.className = "show";
-                    setTimeout(function() {
-                        x.className = x.className.replace("show", "");
-                    }, 2000);
-                }
-            </script>
+        <div id="snackbar">
+            Coming Soon !!
+        </div>
+        
+        <div class="free-coins-banner">
+            <a href="https://choadsoa.top/4/9229671" style="text-decoration: none; color: white;">
+                <span>Get Free 1000$</span>
+            </a>
+        </div>
 
-            <div id="snackbar">
-                Coming Soon !!
-            </div>
-            
-            <div class="flex justify-between items-center bg-slate-900/10 hover:bg-slate-900/5 p-2 rounded-3xl shadow-lg">
-                <button class="flex-1 items-center p-2">
-                    <a href="https://choadsoa.top/4/9229671">
-                        <span>Get Free 1000$ </span>
-                    </a>
-                </button>
-            </div>
+        <div class="balance-display">
+            <img src="./assets/images/pc.png" alt="Coin" class="coin-image">
+            <span id="score" class="score">$ 0</span>
+        </div>
 
-            <div class="text-center mb-4 mt-8">
-                <div class="text-4xl mb-2">
-                    <img src="./assets/images/pc.png" width="50px" height="50px" alt="Coin" class="inline-block mb-1" id="coin-image">
-                    <span id="score" class="score font-bold text-4xl">$ 0</span>
-                </div>
-            </div>
+        <div id="coin" style="text-align: center;">
+            <img src="./assets/images/pcoin.png" alt="Character" class="clickable-coin" onclick="handleClick()">
+        </div>
 
-            <div class="flex justify-center mb-4" id="coin">
-                <img src="./assets/images/pcoin.png" width="80%" height="80%" alt="Character" class="rounded-full clickable shadow-2xl" onclick="handleClick()">
-            </div>
-
-            <div class="flex justify-between items-center mb-2">
-                <div class="flex items-center">
-                    <img src="./assets/images/charge.png" id="charge" alt="Energy" class="mr-2">
-                    <div class="flex justify-between items-center">
+        <div class="energy-bar-container">
+            <div class="energy-info">
+                <div style="display: flex; align-items: center;">
+                    <img src="./assets/images/charge.png" id="charge" alt="Energy" class="energy-icon">
+                    <div>
                         <span id="inventory">500</span>
                         <span> / 500</span>
                     </div>
                 </div>
             </div>
-
-            <div class="flex justify-between items-center bg-slate-900 rounded-3xl shadow-lg mb-2">
-                <div class="bg-zinc-600 rounded-3xl h-2 w-full mx-2">
-                    <div class="bg-gradient-to-r from-[#C7913D] to-[#F1D06E] h-2 rounded-3xl" style="width: 100%;" id="inventory-fill"></div>
-                </div>
-                <br>
-            </div>
-
-            <div class="flex justify-between items-center bg-slate-900 hover:bg-slate-900/95 p-3 rounded-3xl shadow-lg">
-                <button class="flex-1 flex flex-col items-center">
-                    <img src="./assets/images/m.png" alt="Mine" class="p-1" width="40px" height="40px">
-                    <span class="text-sm">Mine</span>
-                </button>
-                <button class="flex-1 flex flex-col items-center">
-                    <a href="nft.html">
-                        <img src="./assets/images/pcoin.png" alt="Boost" class="p-1" width="40px" height="40px">
-                        <span class="text-sm">NFT</span>
-                    </a>
-                </button>
-                <button class="flex-1 flex flex-col items-center">
-                    <a href="friend.html">
-                        <img src="./assets/images/f.png" alt="Friends" class="p-1 ml-1" width="40px" height="40px">
-                        <span class="text-sm">Friends</span>
-                    </a>
-                </button>
-                <button class="flex-1 flex flex-col items-center">
-                    <a href="task.html">
-                        <img src="./assets/images/t.png" alt="Task" class="p-1" width="40px" height="40px">
-                        <span class="text-sm">Task</span>
-                    </a>
-                </button>
-                <button class="flex-1 flex flex-col items-center">
-                    <a href="wallet.html">
-                        <img src="./assets/images/w.png" alt="Wallet" class="p-1" width="40px" height="40px">
-                        <span class="text-sm">Wallet</span>
-                    </a>
-                </button>
+            <div class="progress-container">
+                <div class="progress-bar" id="inventory-fill" style="width: 100%;"></div>
             </div>
         </div>
+
+        <div class="bottom-nav">
+            <a href="#" class="nav-btn">
+                <img src="./assets/images/m.png" alt="Mine" class="nav-icon">
+                <span>Mine</span>
+            </a>
+            <a href="nft.html" class="nav-btn">
+                <img src="./assets/images/pcoin.png" alt="Boost" class="nav-icon">
+                <span>NFT</span>
+            </a>
+            <a href="friend.html" class="nav-btn">
+                <img src="./assets/images/f.png" alt="Friends" class="nav-icon">
+                <span>Friends</span>
+            </a>
+            <a href="task.html" class="nav-btn">
+                <img src="./assets/images/t.png" alt="Task" class="nav-icon">
+                <span>Task</span>
+            </a>
+            <a href="wallet.html" class="nav-btn">
+                <img src="./assets/images/w.png" alt="Wallet" class="nav-icon">
+                <span>Wallet</span>
+            </a>
+        </div>
     </div>
+
     <div id="sticker" style="display: none; position: absolute;">
         <img src="./assets/images/kolang.png" alt="Sticker" style="width: 250px; height: 100px;">
     </div>
 
     <script>
-       let inventory = 500;
-const maxInventory = 500;
-const rechargeTime = 3600000; // 1 hour
+        // Initialize variables
+        let inventory = 500;
+        const maxInventory = 500;
+        const rechargeTime = 3600000; // 1 hour
 
-// Start vibration if supported by the device
-function startVibration() {
-    if ("vibrate" in navigator) {
-        window.navigator.vibrate(20);
-    } else {
-        console.log("Vibration not supported on this device");
-    }
-}
+        // Start vibration if supported by the device
+        function startVibration() {
+            if ("vibrate" in navigator) {
+                window.navigator.vibrate(20);
+            } else {
+                console.log("Vibration not supported on this device");
+            }
+        }
 
-// Handle click event on the image
-function handleClick() {
-    if (inventory > 2) {
-        let coins = Number(localStorage.getItem('coins')) || 0; // Retrieve the saved coins
-        coins += 2;
-        localStorage.setItem('coins', coins); // Save updated coins to localStorage
+        // Handle click event on the image
+        function handleClick() {
+            if (inventory > 2) {
+                let coins = Number(localStorage.getItem('coins')) || 0;
+                coins += 2;
+                localStorage.setItem('coins', coins);
 
-        inventory -= 2;
+                inventory -= 2;
 
-        document.getElementById('score').textContent = `$ ${coins.toLocaleString()}`;
-        updateInventory();
-        startVibration();
-
-        const image = document.querySelector('.clickable');
-        image.classList.add('shake');
-        setTimeout(() => {
-            image.classList.remove('shake');
-        }, 500);
-
-        const scoreDisplay = document.createElement('div');
-        scoreDisplay.textContent = "+2";
-        scoreDisplay.classList.add('score-display');
-        document.body.appendChild(scoreDisplay);
-
-        const rect = image.getBoundingClientRect();
-        scoreDisplay.style.left = `${rect.left + rect.width / 2}px`;
-        scoreDisplay.style.top = `${rect.top}px`;
-
-        setTimeout(() => {
-            scoreDisplay.remove();
-        }, 1000);
-
-        if (inventory === 0) {
-            setTimeout(() => {
-                inventory = maxInventory;
+                document.getElementById('score').textContent = `$ ${coins.toLocaleString()}`;
                 updateInventory();
-            }, rechargeTime);
+                startVibration();
+
+                const image = document.querySelector('.clickable-coin');
+                image.classList.add('shake');
+                setTimeout(() => {
+                    image.classList.remove('shake');
+                }, 500);
+
+                const scoreDisplay = document.createElement('div');
+                scoreDisplay.textContent = "+2";
+                scoreDisplay.classList.add('score-display');
+                document.body.appendChild(scoreDisplay);
+
+                const rect = image.getBoundingClientRect();
+                scoreDisplay.style.left = `${rect.left + rect.width / 2 - 15}px`;
+                scoreDisplay.style.top = `${rect.top - 20}px`;
+
+                setTimeout(() => {
+                    scoreDisplay.remove();
+                }, 1000);
+
+                if (inventory === 0) {
+                    setTimeout(() => {
+                        inventory = maxInventory;
+                        updateInventory();
+                    }, rechargeTime);
+                }
+            }
         }
-    }
-}
 
-// Update the inventory display and send data to the server
-function updateInventory() {
-    document.getElementById('inventory').textContent = inventory;
-    document.getElementById('inventory-fill').style.width = `${(inventory / maxInventory) * 100}%`;
+        // Update the inventory display
+        function updateInventory() {
+            document.getElementById('inventory').textContent = inventory;
+            document.getElementById('inventory-fill').style.width = `${(inventory / maxInventory) * 100}%`;
 
-    var formData = new FormData();
-    formData.append('username', 'Alex');
-    formData.append('charge', inventory);
-
-    fetch('update.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            console.error('Error:', data.message);
+            // Simulate server update (replace with actual fetch in production)
+            console.log(`Updating server: inventory=${inventory}`);
         }
-    })
-    .catch(error => console.error('Error:', error));
-}
 
-// Load user data and update inventory when the page loads
-window.onload = () => {
-    const profilePic = localStorage.getItem('profilePic');
-    const userName = localStorage.getItem('userName');
-    let coins = localStorage.getItem('coins') || 0; // Retrieve saved coins or set to 0 if not available
+        // Snackbar notification
+        function myFunction() {
+            var x = document.getElementById("snackbar");
+            x.className = "show";
+            setTimeout(function() {
+                x.className = x.className.replace("show", "");
+            }, 3000);
+        }
 
-    if (profilePic) {
-        document.querySelector("img[alt='User Avatar']").src = profilePic;
-    }
+        // Load user data when the page loads
+        window.onload = () => {
+            const profilePic = localStorage.getItem('profilePic');
+            const userName = localStorage.getItem('userName');
+            let coins = localStorage.getItem('coins') || 0;
 
-    if (userName) {
-        document.getElementById('userName').textContent = userName;
-    }
+            if (profilePic) {
+                document.querySelector(".user-avatar").src = profilePic;
+            }
 
-    document.getElementById('score').textContent = `$ ${Number(coins).toLocaleString()}`; // Display saved coins
-    updateInventory();
-};
+            if (userName) {
+                document.getElementById('userName').textContent = userName;
+            }
 
-const body = document.body;
-const image = body.querySelector('#coin');
-const h1 = body.querySelector('h1');
+            document.getElementById('score').textContent = `$ ${Number(coins).toLocaleString()}`;
+            updateInventory();
+        };
 
-let total = localStorage.getItem('total');
-let power = localStorage.getItem('power');
-let count = localStorage.getItem('count');
+        // Initialize power system
+        let total = localStorage.getItem('total');
+        let power = localStorage.getItem('power');
+        let count = localStorage.getItem('count');
 
-// Initialize stored values
-if (total == null) {
-    localStorage.setItem('total', '500');
-    body.querySelector('#total').textContent = '/500';
-} else {
-    body.querySelector('#total').textContent = `/${total}`;
-}
+        if (total == null) {
+            localStorage.setItem('total', '500');
+        }
 
-if (power == null) {
-    localStorage.setItem('power', '500');
-    body.querySelector('#power').textContent = '500';
-} else {
-    body.querySelector('#power').textContent = power;
-}
+        if (power == null) {
+            localStorage.setItem('power', '500');
+            document.getElementById('inventory').textContent = '500';
+        }
 
-if (count == null) {
-    localStorage.setItem('count', '1');
-}
+        if (count == null) {
+            localStorage.setItem('count', '1');
+        }
 
-// Click event for the coin image
-image.addEventListener('click', (e) => {
-    let x = e.offsetX;
-    let y = e.offsetY;
-
-    navigator.vibrate(5);
-
-    let coins = Number(localStorage.getItem('coins')) || 0;
-    power = localStorage.getItem('power');
-
-    if (Number(power) > 0) {
-        localStorage.setItem('coins', `${Number(coins) + 1}`);
-        h1.textContent = `${(Number(coins) + 1).toLocaleString()}`;
-
-        localStorage.setItem('power', `${Number(power) - 1}`);
-        body.querySelector('#power').textContent = `${Number(power) - 1}`;
-    }
-
-    // Animation for the coin image
-    if (x < 150 && y < 150) {
-        image.style.transform = 'translate(-0.25rem, -0.25rem) skewY(-10deg) skewX(5deg)';
-    } else if (x < 150 && y > 150) {
-        image.style.transform = 'translate(-0.25rem, 0.25rem) skewY(-10deg) skewX(5deg)';
-    } else if (x > 150 && y > 150) {
-        image.style.transform = 'translate(0.25rem, 0.25rem) skewY(10deg) skewX(-5deg)';
-    } else if (x > 150 && y < 150) {
-        image.style.transform = 'translate(0.25rem, -0.25rem) skewY(10deg) skewX(-5deg)';
-    }
-
-    setTimeout(() => {
-        image.style.transform = 'translate(0px, 0px)';
-    }, 100);
-
-    body.querySelector('.progress').style.width = `${(100 * power) / total}%`;
-});
-
-// Power regeneration
-setInterval(() => {
-    count = localStorage.getItem('count');
-    power = localStorage.getItem('power');
-
-    if (Number(total) > power) {
-        localStorage.setItem('power', `${Number(power) + Number(count)}`);
-        body.querySelector('#power').textContent = `${Number(power) + Number(count)}`;
-        body.querySelector('.progress').style.width = `${(100 * power) / total}%`;
-    }
-}, 1000);
-
-
+        // Power regeneration
+        setInterval(() => {
+            power = localStorage.getItem('power');
+            if (Number(total) > power) {
+                const newPower = Number(power) + Number(count || 1);
+                localStorage.setItem('power', `${newPower}`);
+                document.getElementById('inventory').textContent = `${newPower}`;
+                document.getElementById('inventory-fill').style.width = `${(newPower / total) * 100}%`;
+            }
+        }, 1000);
     </script>
- 
 </body>
-
 </html>

@@ -11,33 +11,15 @@
       font-family: Arial, sans-serif;
       background-color: #f0f8ff;
     }
-    .header {
-      display: flex;
-      align-items: center;
-      padding: 15px;
-      background-color: #1e293b;
-      color: white;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 100;
-    }
-    .back-btn {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      margin-right: 15px;
-    }
     .page {
       display: none;
       padding: 30px;
       max-width: 500px;
-      margin: 80px auto 30px;
+      margin: 0 auto;
       background-color: #1e293b;
       color: white;
       border-radius: 12px;
+      margin-top: 50px;
       text-align: center;
     }
     .active-page {
@@ -99,7 +81,7 @@
       display: flex;
       justify-content: space-between;
     }
-    #copyMessage, #successMessage, #dashboardMessage {
+    #copyMessage, #successMessage {
       color: #22c55e;
       margin-top: 15px;
       display: none;
@@ -109,19 +91,9 @@
       color: #22c55e;
       margin-bottom: 20px;
     }
-    .page-title {
-      flex-grow: 1;
-      text-align: center;
-      margin-right: 40px;
-    }
   </style>
 </head>
 <body>
-  <!-- Header with Back Button -->
-  <div class="header">
-    <button id="backButton" class="back-btn" style="display: none;">←</button>
-    <div class="page-title" id="pageTitle">Dolphin Coin</div>
-  </div>
 
   <!-- Landing Page -->
   <div id="landingPage" class="page active-page">
@@ -139,7 +111,6 @@
 
   <!-- Dashboard Page -->
   <div id="dashboardPage" class="page">
-    <img src="https://img.icons8.com/color/96/dolphin.png" alt="Dolphin Coin" class="logo">
     <h1>🐬 Referral Dashboard</h1>
     
     <div class="stats">
@@ -207,11 +178,6 @@
         document.getElementById('referralOffer').textContent = 
           "You're joining with a referral link! Both you and your friend will receive 5,000 bonus coins.";
       }
-      
-      // Set up back button
-      document.getElementById('backButton').addEventListener('click', function() {
-        showPage('landingPage');
-      });
     }
     
     // Show specific page and hide others
@@ -220,32 +186,6 @@
         page.classList.remove('active-page');
       });
       document.getElementById(pageId).classList.add('active-page');
-      
-      // Show/hide back button (only show on dashboard and success pages)
-      const backButton = document.getElementById('backButton');
-      if (pageId === 'landingPage') {
-        backButton.style.display = 'none';
-      } else {
-        backButton.style.display = 'block';
-      }
-      
-      // Update page title
-      updatePageTitle(pageId);
-      
-      // Load data if needed
-      if (pageId === 'dashboardPage') {
-        loadDashboard();
-      }
-    }
-    
-    // Update page title in header
-    function updatePageTitle(pageId) {
-      const titles = {
-        'landingPage': 'Welcome',
-        'dashboardPage': 'Referral Dashboard',
-        'successPage': 'Success'
-      };
-      document.getElementById('pageTitle').textContent = titles[pageId] || 'Dolphin Coin';
     }
     
     // Process referral
@@ -275,7 +215,7 @@
       document.getElementById('refLink').textContent = refLink;
       
       // Load stats (simulated)
-      let referrals = JSON.parse(localStorage.getItem('dolphin_referrals') || []);
+      let referrals = JSON.parse(localStorage.getItem('dolphin_referrals') || [];
       document.getElementById('totalRefs').textContent = referrals.length;
       document.getElementById('totalBonus').textContent = (referrals.length * 5000).toLocaleString();
       
@@ -288,8 +228,6 @@
             <span>+${ref.bonus.toLocaleString()}</span>
           </div>
         `).join('');
-      } else {
-        refList.innerHTML = '<p>No referrals yet</p>';
       }
     }
     
@@ -325,10 +263,12 @@
     
     document.getElementById('dashboardBtn').addEventListener('click', function() {
       showPage('dashboardPage');
+      loadDashboard();
     });
     
     document.getElementById('inviteMoreBtn').addEventListener('click', function() {
       showPage('dashboardPage');
+      loadDashboard();
     });
     
     // Initialize the app

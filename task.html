@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./assets/css/responsive-1.css">
     <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
     <!-- Monetag Ads Script -->
-<script src='//whephiwums.com/sdk.js' data-zone='9237110' data-sdk='show_9237110'></script>
+    <script src='//whephiwums.com/sdk.js' data-zone='9237110' data-sdk='show_9237110'></script>
     <style>
         /* Your existing styles... */
         
@@ -58,6 +58,36 @@
             align-items: center;
             justify-content: center;
         }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .ml-3 { margin-left: 0.75rem; }
+        .ml-4 { margin-left: 1rem; }
+        .mr-4 { margin-right: 1rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .m-r-25 { margin-right: 25px; }
+        .p-4 { padding: 1rem; }
+        .bg-slate-900 { background-color: #1e293b; }
+        .rounded-3xl { border-radius: 1.5rem; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .select-none { user-select: none; }
+        .text-center { text-align: center; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
     </style>
 </head>
 
@@ -95,7 +125,7 @@
         </div>
         
         <!-- Task 1 -->
-        <div class="task-button" id="task1" onclick="showAd('task1')">
+        <div class="task-button" id="task1" onclick="startTask('task1')">
             <div class="boosters-button-detail">
                 <div class="boosters-button-image">
                     <img src="./assets/images/youtube.png" width="50px" alt="YouTube">
@@ -112,7 +142,7 @@
         </div>
         
         <!-- Task 2 -->
-        <div class="task-button" id="task2" onclick="showAd('task2')">
+        <div class="task-button" id="task2" onclick="startTask('task2')">
             <div class="boosters-button-detail">
                 <div class="boosters-button-image">
                     <img src="./assets/images/telegram.png" width="50px" alt="Telegram">
@@ -129,7 +159,7 @@
         </div>
         
         <!-- Task 3 -->
-        <div class="task-button" id="task3" onclick="showAd('task3')">
+        <div class="task-button" id="task3" onclick="startTask('task3')">
             <div class="boosters-button-detail">
                 <div class="boosters-button-image">
                     <img src="./assets/images/twitter.png" width="50px" alt="Twitter">
@@ -146,7 +176,7 @@
         </div>
         
         <!-- Task 4 -->
-        <div class="task-button" id="task4" onclick="showAd('task4')">
+        <div class="task-button" id="task4" onclick="startTask('task4')">
             <div class="boosters-button-detail">
                 <div class="boosters-button-image">
                     <img src="./assets/images/instagram.png" width="50px" alt="Instagram">
@@ -163,7 +193,7 @@
         </div>
         
         <!-- Task 5 -->
-        <div class="task-button" id="task5" onclick="showAd('task5')">
+        <div class="task-button" id="task5" onclick="startTask('task5')">
             <div class="boosters-button-detail">
                 <div class="boosters-button-image">
                     <img src="./assets/images/website.png" width="50px" alt="Website">
@@ -183,32 +213,35 @@
     <script>
         // Track completed tasks
         const completedTasks = {};
+        let currentTaskId = null;
         
-        // Function to show ad for a task
-        function showAd(taskId) {
-            // Don't show ad if task already completed
+        // Function to start a task (show ad first)
+        function startTask(taskId) {
+            // Don't proceed if task already completed
             if (completedTasks[taskId]) return;
             
-            // Show ad container
+            currentTaskId = taskId;
+            
+            // Show loading message
             document.getElementById('adContainer').classList.remove('hidden');
+            document.getElementById('adDisplay').innerHTML = '<p>Loading ad...</p>';
             
-            // Load Monetag ad
-            const adDisplay = document.getElementById('adDisplay');
-            adDisplay.innerHTML = '';
-            
-            // Create Monetag ad script
-            const script = document.createElement('script');
-            script.src = 'https://s.monetag.com/tag?publisher_id=YOUR_PUBLISHER_ID';
-            adDisplay.appendChild(script);
-            
-            // Show continue button after delay (simulating ad completion)
-            setTimeout(() => {
+            // Show rewarded interstitial ad
+            show_9237110().then(() => {
+                // Ad watched successfully - show continue button
                 document.getElementById('continueBtn').classList.remove('hidden');
-            }, 30000); // 30 seconds for ad completion
+                document.getElementById('adDisplay').innerHTML = '<p>Ad completed! Click continue to complete your task.</p>';
+            }).catch((error) => {
+                // Ad failed or was closed
+                document.getElementById('adDisplay').innerHTML = '<p>Ad not completed. Please try again.</p>';
+                setTimeout(() => {
+                    document.getElementById('adContainer').classList.add('hidden');
+                }, 2000);
+            });
             
-            // Set current task
+            // Set continue button action
             document.getElementById('continueBtn').onclick = function() {
-                completeTask(taskId);
+                completeTask(currentTaskId);
             };
         }
         
@@ -227,11 +260,11 @@
             // Calculate reward based on task
             let reward = 0;
             switch(taskId) {
-                case 'task1': reward = 50000; break;
-                case 'task2': reward = 50000; break;
-                case 'task3': reward = 30000; break;
-                case 'task4': reward = 30000; break;
-                case 'task5': reward = 20000; break;
+                case 'task1': reward = 5000; break;
+                case 'task2': reward = 5000; break;
+                case 'task3': reward = 3000; break;
+                case 'task4': reward = 3000; break;
+                case 'task5': reward = 2000; break;
             }
             
             // Update balance
@@ -240,6 +273,9 @@
             
             // Show completion message
             alert(`Task completed! You earned ${reward} coins!`);
+            
+            // Reset current task
+            currentTaskId = null;
             
             // In a real implementation, you would send this to your backend
             // fetch('/complete-task', {
@@ -257,6 +293,18 @@
                     this.classList.add('hidden');
                     document.getElementById('continueBtn').classList.add('hidden');
                 }
+            });
+            
+            // Also show interstitial ads occasionally
+            show_9237110({ 
+                type: 'inApp', 
+                inAppSettings: { 
+                    frequency: 2, 
+                    capping: 0.1, 
+                    interval: 30, 
+                    timeout: 5, 
+                    everyPage: false 
+                } 
             });
         });
     </script>

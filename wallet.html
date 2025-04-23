@@ -18,6 +18,7 @@
     <style>
         body {
             background: linear-gradient(to left top, #e6b971, #F1D06E) fixed;
+            font-family: 'Arial', sans-serif;
         }
 
         .div-wir {
@@ -25,6 +26,24 @@
             position: relative;
             top: 5px;
             width: auto;
+            max-width: 500px;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .notice-box {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .form-control {
@@ -94,19 +113,23 @@
             border: none;
             cursor: pointer;
             transition: all 0.3s;
+            color: #fff;
+            font-weight: bold;
         }
 
         .method-btn.active {
             background: rgba(255, 255, 255, 0.7);
-            font-weight: bold;
+            color: #333;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
+        .task-reminder {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            text-align: center;
+            color: #fff;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -121,9 +144,20 @@
         </a>
     </div>
     
-    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br>
     
     <div class="div-wir p-4">
+        <!-- Welcome message with username -->
+        <div class="welcome-message">
+            <h2 id="username-display">Welcome, User!</h2>
+        </div>
+        
+        <!-- Notice box -->
+        <div class="notice-box">
+            <p><strong>Payment methods (bKash and Bank) will be available next month!</strong></p>
+            <p>You'll be able to easily withdraw your points to BDT and USD.</p>
+        </div>
+        
         <input type="number" id="points" class="form-control" placeholder="Enter points to withdraw (e.g., 1000000)">
         
         <div class="method-selector">
@@ -147,80 +181,104 @@
             <input type="text" id="swift-code" class="form-control" placeholder="SWIFT/BIC Code (for international)">
             <button id="bank-withdraw" class="btn">Request Bank Withdrawal</button>
         </div>
+        
+        <!-- Task reminder -->
+        <div class="task-reminder">
+            <p><strong>Attention:</strong> Task points will convert to your withdrawal balance.</p>
+            <p>Complete your 50 daily tasks - they auto-reset every 24 hours!</p>
+        </div>
     </div>
 
     <script src="./assets/js/charge.js"></script>
     
     <script>
-        // Payment method selection
-        const methodBtns = document.querySelectorAll('.method-btn');
-        const paymentMethods = document.querySelectorAll('.payment-method');
+        // Display username (you would get this from your authentication system)
+        function displayUsername() {
+            // In a real app, you would get this from your backend or auth system
+            const username = "John Doe"; // Replace with actual username
+            document.getElementById('username-display').textContent = `Welcome, ${username}!`;
+        }
         
-        methodBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active class from all buttons and forms
-                methodBtns.forEach(b => b.classList.remove('active'));
-                paymentMethods.forEach(method => method.classList.remove('active'));
-                
-                // Add active class to clicked button
-                btn.classList.add('active');
-                
-                // Show corresponding form
-                const method = btn.getAttribute('data-method');
-                document.getElementById(`${method}-form`).classList.add('active');
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayUsername();
+            
+            // Payment method selection
+            const methodBtns = document.querySelectorAll('.method-btn');
+            const paymentMethods = document.querySelectorAll('.payment-method');
+            
+            methodBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons and forms
+                    methodBtns.forEach(b => b.classList.remove('active'));
+                    paymentMethods.forEach(method => method.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Show corresponding form
+                    const method = btn.getAttribute('data-method');
+                    document.getElementById(`${method}-form`).classList.add('active');
+                });
             });
+            
+            // Withdrawal request handling
+            document.getElementById('bkash-withdraw').addEventListener('click', processBkashWithdrawal);
+            document.getElementById('bank-withdraw').addEventListener('click', processBankWithdrawal);
+            
+            function processBkashWithdrawal() {
+                const points = document.getElementById('points').value;
+                const bkashNumber = document.getElementById('bkash-number').value;
+                const bkashName = document.getElementById('bkash-name').value;
+                
+                if (!points || !bkashNumber || !bkashName) {
+                    alert('Please fill all fields');
+                    return;
+                }
+                
+                if (!/^01[3-9]\d{8}$/.test(bkashNumber)) {
+                    alert('Please enter a valid bKash number');
+                    return;
+                }
+                
+                // Show coming soon message
+                alert('Withdrawal service will be available next month!');
+                
+                // Here you would typically send this data to your server
+                // alert(`Withdrawal request submitted!\n${points} points to bKash: ${bkashNumber}\nAccount: ${bkashName}`);
+                
+                // Reset form
+                document.getElementById('points').value = '';
+                document.getElementById('bkash-number').value = '';
+                document.getElementById('bkash-name').value = '';
+            }
+            
+            function processBankWithdrawal() {
+                const points = document.getElementById('points').value;
+                const bankName = document.getElementById('bank-name').value;
+                const accountName = document.getElementById('account-name').value;
+                const accountNumber = document.getElementById('account-number').value;
+                
+                if (!points || !bankName || !accountName || !accountNumber) {
+                    alert('Please fill all required fields');
+                    return;
+                }
+                
+                // Show coming soon message
+                alert('Withdrawal service will be available next month!');
+                
+                // Here you would typically send this data to your server
+                // alert(`Withdrawal request submitted!\n${points} points to Bank: ${bankName}\nAccount: ${accountName}\nNumber: ${accountNumber}`);
+                
+                // Reset form
+                document.getElementById('points').value = '';
+                document.getElementById('bank-name').value = '';
+                document.getElementById('account-name').value = '';
+                document.getElementById('account-number').value = '';
+                document.getElementById('routing-number').value = '';
+                document.getElementById('swift-code').value = '';
+            }
         });
-        
-        // Withdrawal request handling
-        document.getElementById('bkash-withdraw').addEventListener('click', processBkashWithdrawal);
-        document.getElementById('bank-withdraw').addEventListener('click', processBankWithdrawal);
-        
-        function processBkashWithdrawal() {
-            const points = document.getElementById('points').value;
-            const bkashNumber = document.getElementById('bkash-number').value;
-            const bkashName = document.getElementById('bkash-name').value;
-            
-            if (!points || !bkashNumber || !bkashName) {
-                alert('Please fill all fields');
-                return;
-            }
-            
-            if (!/^01[3-9]\d{8}$/.test(bkashNumber)) {
-                alert('Please enter a valid bKash number');
-                return;
-            }
-            
-            // Here you would typically send this data to your server
-            alert(`Withdrawal request submitted!\n${points} points to bKash: ${bkashNumber}\nAccount: ${bkashName}`);
-            
-            // Reset form
-            document.getElementById('points').value = '';
-            document.getElementById('bkash-number').value = '';
-            document.getElementById('bkash-name').value = '';
-        }
-        
-        function processBankWithdrawal() {
-            const points = document.getElementById('points').value;
-            const bankName = document.getElementById('bank-name').value;
-            const accountName = document.getElementById('account-name').value;
-            const accountNumber = document.getElementById('account-number').value;
-            
-            if (!points || !bankName || !accountName || !accountNumber) {
-                alert('Please fill all required fields');
-                return;
-            }
-            
-            // Here you would typically send this data to your server
-            alert(`Withdrawal request submitted!\n${points} points to Bank: ${bankName}\nAccount: ${accountName}\nNumber: ${accountNumber}`);
-            
-            // Reset form
-            document.getElementById('points').value = '';
-            document.getElementById('bank-name').value = '';
-            document.getElementById('account-name').value = '';
-            document.getElementById('account-number').value = '';
-            document.getElementById('routing-number').value = '';
-            document.getElementById('swift-code').value = '';
-        }
     </script>
 </body>
 </html>

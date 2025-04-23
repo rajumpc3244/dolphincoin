@@ -1,17 +1,13 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-<script src='//whephiwums.com/sdk.js' data-zone='9237110' data-sdk='show_9237110'></script>
-	<meta charset="UTF-8">
+    <script src='//whephiwums.com/sdk.js' data-zone='9237110' data-sdk='show_9237110'></script>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet</title>
+    <title>Wallet Withdrawal</title>
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="stylesheet" href="./assets/css/responsive-2.css">
-  
-
-
-
     <link rel="icon" type="image/x-icon" href="./assets/favicon/favicon.ico">
     <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
     <link rel="icon" type="image/png" href="./assets/favicon/favicon-32x32.png" sizes="32x32">
@@ -21,92 +17,210 @@
     
     <style>
         body {
-  background: linear-gradient(to left top, #e6b971, #F1D06E) fixed;
- 
-}
+            background: linear-gradient(to left top, #e6b971, #F1D06E) fixed;
+        }
 
-.div-wir {
-  margin: auto;
-  position: relative;
-  top: 5px;
-  width: auto;
-}
+        .div-wir {
+            margin: auto;
+            position: relative;
+            top: 5px;
+            width: auto;
+        }
 
-#form {
-  width: 100%;
-  padding: 10px;
-  font-size: 18px;
-  outline:none;
-  background: linear-gradient(to left top, #F1D06E, rgb(114, 124, 27)) fixed;
-  border-radius: 24px;
-  border: 2px solid rgba(255,255,255,0.2);
-  color: rgba(8, 8, 8, 0.678);
-  transition: all 0.5s;
-}
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            outline: none;
+            background: linear-gradient(to left top, #F1D06E, rgb(114, 124, 27)) fixed;
+            border-radius: 24px;
+            border: 2px solid rgba(255,255,255,0.2);
+            color: rgba(8, 8, 8, 0.678);
+            transition: all 0.5s;
+            margin-bottom: 10px;
+        }
 
-#form:hover {
-  border: 2px solid rgba(255,255,255,0.5);
-}
-#form:focus {
-  border: 2px solid rgba(255,255,255,0.5);
-  background: linear-gradient(to left top, #F1D06E, yellow) fixed;
-}
+        .form-control:hover {
+            border: 2px solid rgba(255,255,255,0.5);
+        }
 
-#button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  font-size: 15px;
-  font-weight:bold;
-  outline:none;
-  background: linear-gradient(to left top, #F1D06E, rgb(202, 223, 17)) fixed;
-  border-radius: 24px;
-  border: 5px solid rgba(255,255,255,0.2);
-  color: rgba(0, 0, 0, 0.8);
-  transition: all 0.5s;
-}
+        .form-control:focus {
+            border: 2px solid rgba(255,255,255,0.5);
+            background: linear-gradient(to left top, #F1D06E, yellow) fixed;
+        }
 
-#button:hover {
-  border: 5px solid rgba(255,255,255,0.5);
-  background: linear-gradient(to left top, #9beb06, #87ca0a) fixed;
-}
+        .btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            outline: none;
+            background: linear-gradient(to left top, #F1D06E, rgb(202, 223, 17)) fixed;
+            border-radius: 24px;
+            border: 5px solid rgba(255,255,255,0.2);
+            color: rgba(0, 0, 0, 0.8);
+            transition: all 0.5s;
+            cursor: pointer;
+        }
 
-#button:focus {
-  background: linear-gradient(to left top, #98ca0d, yellow) fixed;
-}
+        .btn:hover {
+            border: 5px solid rgba(255,255,255,0.5);
+            background: linear-gradient(to left top, #9beb06, #87ca0a) fixed;
+        }
 
+        .btn:focus {
+            background: linear-gradient(to left top, #98ca0d, yellow) fixed;
+        }
+
+        .payment-method {
+            display: none;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+
+        .method-selector {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .method-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .method-btn.active {
+            background: rgba(255, 255, 255, 0.7);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
     </style>
-    
 </head>
 
 <body class="boost">
-
-  <div class="haeder">
-    <a href="index.html">
+    <div class="haeder">
+        <a href="index.html">
             <svg width="25px" height="25px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22 11.9299H2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                 <path d="M8.00009 19L2.84009 14C2.5677 13.7429 2.35071 13.433 2.20239 13.0891C2.05407 12.7452 1.97754 12.3745 1.97754 12C1.97754 11.6255 2.05407 11.2548 2.20239 10.9109C2.35071 10.567 2.5677 10.2571 2.84009 10L8.00009 5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
         </a>
     </div>
- 
     
-        <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br>
-        <div class="div-wir p-4">
-              <input type="text" id="form" placeholder="100000000-p">
-               <input class="mt-2 p-4" type="submit" id="button" value="Withdrawal">
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    
+    <div class="div-wir p-4">
+        <input type="number" id="points" class="form-control" placeholder="Enter points to withdraw (e.g., 1000000)">
+        
+        <div class="method-selector">
+            <button class="method-btn active" data-method="bkash">bKash</button>
+            <button class="method-btn" data-method="bank">Bank Transfer</button>
         </div>
- 
- </div>
+        
+        <!-- bKash Payment Form -->
+        <div id="bkash-form" class="payment-method active">
+            <input type="tel" id="bkash-number" class="form-control" placeholder="bKash Number (e.g., 017XXXXXXXX)">
+            <input type="text" id="bkash-name" class="form-control" placeholder="Account Holder Name">
+            <button id="bkash-withdraw" class="btn">Request bKash Withdrawal</button>
+        </div>
+        
+        <!-- Bank Transfer Form -->
+        <div id="bank-form" class="payment-method">
+            <input type="text" id="bank-name" class="form-control" placeholder="Bank Name">
+            <input type="text" id="account-name" class="form-control" placeholder="Account Holder Name">
+            <input type="text" id="account-number" class="form-control" placeholder="Account Number">
+            <input type="text" id="routing-number" class="form-control" placeholder="Routing Number (if applicable)">
+            <input type="text" id="swift-code" class="form-control" placeholder="SWIFT/BIC Code (for international)">
+            <button id="bank-withdraw" class="btn">Request Bank Withdrawal</button>
+        </div>
+    </div>
 
-
-                    
-   
+    <script src="./assets/js/charge.js"></script>
     
-
-<script src="./assets/js/charge.js"></script>
-    
-
+    <script>
+        // Payment method selection
+        const methodBtns = document.querySelectorAll('.method-btn');
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        
+        methodBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons and forms
+                methodBtns.forEach(b => b.classList.remove('active'));
+                paymentMethods.forEach(method => method.classList.remove('active'));
+                
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                // Show corresponding form
+                const method = btn.getAttribute('data-method');
+                document.getElementById(`${method}-form`).classList.add('active');
+            });
+        });
+        
+        // Withdrawal request handling
+        document.getElementById('bkash-withdraw').addEventListener('click', processBkashWithdrawal);
+        document.getElementById('bank-withdraw').addEventListener('click', processBankWithdrawal);
+        
+        function processBkashWithdrawal() {
+            const points = document.getElementById('points').value;
+            const bkashNumber = document.getElementById('bkash-number').value;
+            const bkashName = document.getElementById('bkash-name').value;
+            
+            if (!points || !bkashNumber || !bkashName) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            if (!/^01[3-9]\d{8}$/.test(bkashNumber)) {
+                alert('Please enter a valid bKash number');
+                return;
+            }
+            
+            // Here you would typically send this data to your server
+            alert(`Withdrawal request submitted!\n${points} points to bKash: ${bkashNumber}\nAccount: ${bkashName}`);
+            
+            // Reset form
+            document.getElementById('points').value = '';
+            document.getElementById('bkash-number').value = '';
+            document.getElementById('bkash-name').value = '';
+        }
+        
+        function processBankWithdrawal() {
+            const points = document.getElementById('points').value;
+            const bankName = document.getElementById('bank-name').value;
+            const accountName = document.getElementById('account-name').value;
+            const accountNumber = document.getElementById('account-number').value;
+            
+            if (!points || !bankName || !accountName || !accountNumber) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            // Here you would typically send this data to your server
+            alert(`Withdrawal request submitted!\n${points} points to Bank: ${bankName}\nAccount: ${accountName}\nNumber: ${accountNumber}`);
+            
+            // Reset form
+            document.getElementById('points').value = '';
+            document.getElementById('bank-name').value = '';
+            document.getElementById('account-name').value = '';
+            document.getElementById('account-number').value = '';
+            document.getElementById('routing-number').value = '';
+            document.getElementById('swift-code').value = '';
+        }
+    </script>
 </body>
-
 </html>

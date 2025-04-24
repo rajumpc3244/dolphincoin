@@ -1,221 +1,287 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dolphin Coin Referral System</title>
-  <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-    }
-    .container {
-      padding: 30px;
-      max-width: 500px;
-      margin: 0 auto;
-      background-color: #1e293b;
-      color: white;
-      border-radius: 12px;
-      margin-top: 50px;
-      text-align: center;
-    }
-    .invite-box {
-      background-color: #334155;
-      padding: 20px;
-      border-radius: 20px;
-      margin-bottom: 20px;
-    }
-    .invite-box img {
-      width: 50px;
-      height: 50px;
-      margin-right: 10px;
-      vertical-align: middle;
-    }
-    .btn {
-      padding: 15px;
-      width: 100%;
-      background-color: #475569;
-      color: white;
-      font-size: 18px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-    .btn:hover {
-      background-color: #64748b;
-    }
-    #copyMessage {
-      color: #22c55e;
-      margin-top: 15px;
-      display: none;
-    }
-    .balance-display {
-      margin: 20px 0;
-      font-size: 18px;
-    }
-    .recent-referrals {
-      margin-top: 20px;
-      text-align: left;
-    }
-    .referral-item {
-      background-color: #334155;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolphin Coin - Friends</title>
+    <style>
+        :root {
+            --primary: #6e00ff;
+            --secondary: #ff00a8;
+            --accent: #00f7ff;
+            --dark: #0a001a;
+            --light: #f0f0f0;
+            --gold: #F1D06E;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark), #1a0033);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(15, 5, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(110, 0, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            background: linear-gradient(90deg, var(--gold), #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .bonus-section {
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .bonus-section h2 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .bonus-section h2::before {
+            content: "👥";
+            margin-right: 10px;
+        }
+        
+        .bonus-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+        
+        .bonus-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .bonus-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .bonus-details {
+            flex: 1;
+        }
+        
+        .bonus-amount {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+            margin: 20px 0;
+        }
+        
+        .friends-list {
+            margin-top: 20px;
+        }
+        
+        .friends-list h3 {
+            margin-bottom: 15px;
+            color: var(--gold);
+            font-size: 16px;
+        }
+        
+        .friend-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .friend-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        
+        .friend-info {
+            flex: 1;
+        }
+        
+        .friend-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .friend-login {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .invite-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .invite-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(110, 0, 255, 0.4);
+        }
+        
+        .invite-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Animation for new friend */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .new-friend {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
 </head>
 <body>
-
-  <div class="container">
-    <h2>🐬 DolphinCoin Referral System</h2>
-    
-    <!-- Balance Display -->
-    <div class="balance-display">
-      Your Balance: <span id="userBalance">0</span> coins
-    </div>
-
-    <!-- Referral Section -->
-    <div class="invite-box">
-      <img src="https://img.icons8.com/color/48/gift.png" alt="gift">
-      <span><strong>Invite a friend</strong><br>+5,000 for you and your friend</span>
-    </div>
-
-    <button id="inviteButton" class="btn">Invite a Friend</button>
-    <p id="copyMessage">Copied to clipboard!</p>
-
-    <!-- Recent Referrals -->
-    <div class="recent-referrals" id="recentReferrals" style="display: none;">
-      <h3>Recent Referrals</h3>
-      <div id="referralList"></div>
-    </div>
-  </div>
-
-  <script>
-    // Initialize user data
-    let userData = {
-      id: '',
-      balance: 0,
-      referrals: []
-    };
-
-    // Get URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const refCode = urlParams.get('ref');
-    const chatId = urlParams.get('chat_id') || "user_" + Math.random().toString(36).substr(2, 9);
-
-    // Initialize the page
-    document.addEventListener('DOMContentLoaded', function() {
-      // Load user data from localStorage or initialize
-      loadUserData();
-      
-      // Check if coming from referral
-      if (refCode && refCode !== userData.id) {
-        processReferral(refCode);
-      }
-      
-      // Update UI
-      updateUI();
-    });
-
-    // Load or initialize user data
-    function loadUserData() {
-      const savedData = localStorage.getItem('dolphinCoinUserData');
-      if (savedData) {
-        userData = JSON.parse(savedData);
-      } else {
-        userData = {
-          id: chatId,
-          balance: 0,
-          referrals: []
-        };
-        saveUserData();
-      }
-    }
-
-    // Save user data
-    function saveUserData() {
-      localStorage.setItem('dolphinCoinUserData', JSON.stringify(userData));
-    }
-
-    // Process a new referral
-    function processReferral(referrerId) {
-      // Check if this is a new referral
-      if (!userData.referrals.some(ref => ref.referrer === referrerId)) {
-        // Add bonus to current user
-        userData.balance += 5000;
+    <div class="container">
+        <h1>StormCoin - Free Mining</h1>
         
-        // Add bonus to referrer (simulated - in real app this would be server-side)
-        // Note: In a real app, you would need server-side code to update referrer's balance
+        <div class="bonus-section">
+            <h2>FRIENDS</h2>
+            <p style="margin-bottom: 15px; opacity: 0.8;">You and your friend will receive bonuses.</p>
+            
+            <div class="bonus-item">
+                <div class="bonus-icon">👫</div>
+                <div class="bonus-details">
+                    <div>Invite a friend</div>
+                    <div class="bonus-amount">+5,000 ▼ for you and your friend</div>
+                </div>
+            </div>
+            
+            <div class="bonus-item">
+                <div class="bonus-icon">⭐</div>
+                <div class="bonus-details">
+                    <div>Invite a friend with Telegram premium</div>
+                    <div class="bonus-amount">+5,000 ▼ for you and your friend</div>
+                </div>
+            </div>
+        </div>
         
-        // Record the referral
-        userData.referrals.push({
-          referrer: referrerId,
-          date: new Date().toLocaleString(),
-          bonus: 5000
+        <hr>
+        
+        <div class="friends-list">
+            <h3>LIST OF YOUR FRIENDS (1)</h3>
+            
+            <div class="friend-item new-friend">
+                <div class="friend-avatar">👩</div>
+                <div class="friend-info">
+                    <div class="friend-name">Laura Lili</div>
+                    <div class="friend-login">Last Login: Apr 24, 2025</div>
+                </div>
+            </div>
+            
+            <a href="#" class="invite-btn">INVITE A FRIEND</a>
+        </div>
+    </div>
+
+    <script>
+        // This would be connected to your backend in a real implementation
+        document.querySelector('.invite-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // In a real app, this would generate a referral link
+            const referralLink = "https://t.me/YourBotName?start=ref_" + Math.random().toString(36).substring(2, 8);
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(referralLink).then(() => {
+                alert("Referral link copied to clipboard!\nShare this with your friends: " + referralLink);
+            }).catch(err => {
+                // Fallback if clipboard API not available
+                prompt("Copy this referral link to share with friends:", referralLink);
+            });
+            
+            // Here you would typically send the referral to your backend
+            // fetch('/api/referral', {
+            //     method: 'POST',
+            //     body: JSON.stringify({ userId: 'currentUserId' })
+            // });
         });
         
-        saveUserData();
-        updateUI();
+        // Simulate adding a new friend (in real app this would come from backend)
+        function simulateNewFriend() {
+            const friendsList = document.querySelector('.friends-list');
+            const friendCount = document.querySelector('h3');
+            
+            // Update friend count
+            const currentCount = parseInt(friendCount.textContent.match(/\((\d+)\)/)[1]);
+            friendCount.textContent = friendCount.textContent.replace(/\(\d+\)/, `(${currentCount + 1})`);
+            
+            // Add new friend
+            const newFriend = document.createElement('div');
+            newFriend.className = 'friend-item new-friend';
+            newFriend.innerHTML = `
+                <div class="friend-avatar">👨</div>
+                <div class="friend-info">
+                    <div class="friend-name">New Friend</div>
+                    <div class="friend-login">Last Login: Just now</div>
+                </div>
+            `;
+            
+            friendsList.insertBefore(newFriend, document.querySelector('.invite-btn'));
+            
+            // Show bonus notification
+            setTimeout(() => {
+                alert("You earned 5,000 ▼ for referring a friend!");
+            }, 500);
+        }
         
-        // Show success message
-        alert("Welcome bonus of 5,000 coins added to your account!");
-      }
-    }
-
-    // Update the UI
-    function updateUI() {
-      // Update balance
-      document.getElementById('userBalance').textContent = userData.balance.toLocaleString();
-      
-      // Show recent referrals if any
-      if (userData.referrals.length > 0) {
-        document.getElementById('recentReferrals').style.display = 'block';
-        const referralList = document.getElementById('referralList');
-        referralList.innerHTML = '';
-        
-        userData.referrals.slice(0, 5).forEach(ref => {
-          const item = document.createElement('div');
-          item.className = 'referral-item';
-          item.innerHTML = `
-            <div>From: ${ref.referrer}</div>
-            <div>Date: ${ref.date}</div>
-            <div>Bonus: +${ref.bonus.toLocaleString()} coins</div>
-          `;
-          referralList.appendChild(item);
-        });
-      }
-    }
-
-    // Handle invite button click
-    document.getElementById('inviteButton').addEventListener('click', function() {
-      const referralLink = `https://t.me/share/url?url=https://t.me/dolphincoinearning_bot?start=ref${userData.id}&text=Join%20me%20in%20DolphinCoin%20and%20start%20earning%20today!%20Get%205,000%20bonus%20coins!`;
-      
-      navigator.clipboard.writeText(referralLink).then(function() {
-        const copyMessage = document.getElementById('copyMessage');
-        copyMessage.style.display = 'block';
-        
-        setTimeout(function() {
-          copyMessage.style.display = 'none';
-          window.location = referralLink;
-        }, 2000);
-      }).catch(function(err) {
-        console.error('Error copying referral link:', err);
-        window.location = referralLink;
-      });
-    });
-
-    // Simulate adding coins (for demo purposes)
-    function addCoins(amount) {
-      userData.balance += amount;
-      saveUserData();
-      updateUI();
-    }
-  </script>
-  
-  </div>
-
+        // Uncomment to test adding a friend after 3 seconds
+        // setTimeout(simulateNewFriend, 3000);
+    </script>
 </body>
 </html>

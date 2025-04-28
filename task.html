@@ -44,34 +44,12 @@
             color: #4CAF50;
         }
         
-        .ad-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            display: none;
-        }
-        
         .ad-container {
-            background: #1e293b;
-            border-radius: 15px;
-            padding: 25px;
-            width: 90%;
-            max-width: 500px;
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
             text-align: center;
-            position: relative;
-        }
-        
-        .ad-container h4 {
-            color: white;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
         }
         
         #adDisplay {
@@ -79,26 +57,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-bottom: 20px;
-            color: white;
         }
         
-        #countdown {
-            font-size: 1.5rem;
-            margin: 15px 0;
-            color: #00ffaa;
+        .hidden {
+            display: none !important;
         }
         
         .btn {
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 5px;
             border: none;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1rem;
-            transition: all 0.3s;
         }
         
         .btn-primary {
@@ -106,39 +76,20 @@
             color: white;
         }
         
-        .btn-primary:disabled {
-            background-color: #5a6268;
-            cursor: not-allowed;
-        }
+        .ml-3 { margin-left: 0.75rem; }
+        .ml-4 { margin-left: 1rem; }
+        .mr-4 { margin-right: 1rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .m-r-25 { margin-right: 25px; }
+        .p-4 { padding: 1rem; }
+        .bg-slate-900 { background-color: #1e293b; }
+        .rounded-3xl { border-radius: 1.5rem; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .select-none { user-select: none; }
+        .text-center { text-align: center; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
         
-        .btn-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        /* Loading spinner */
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 4px solid #00ffaa;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Daily progress styles */
+        /* New styles for daily progress */
         .daily-progress {
             background: rgba(0, 0, 0, 0.2);
             height: 10px;
@@ -158,13 +109,11 @@
             text-align: center;
             font-size: 14px;
             margin-bottom: 15px;
-            color: white;
         }
     </style>
 </head>
 
 <body class="boost">
-    <!-- Header and balance display (same as before) -->
     <div class="haeder">
         <a href="index.html">
             <svg width="25px" height="25px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -195,27 +144,102 @@
         </div>
     </div>
 
-    <!-- Ad Overlay (modal) -->
-    <div class="ad-overlay" id="adOverlay">
-        <div class="ad-container">
-            <button class="btn-close" id="closeAdBtn">×</button>
-            <h4>Watch this ad to complete your task</h4>
-            <div id="adDisplay">
-                <div class="spinner"></div>
-                <p>Loading advertisement...</p>
-            </div>
-            <div id="countdown">Please wait: 15 seconds</div>
-            <button class="btn btn-primary" id="continueBtn" disabled>Continue to Task</button>
-        </div>
+    <!-- Ad Container -->
+    <div class="ad-container hidden" id="adContainer">
+        <h4>Watch this ad to complete your task</h4>
+        <div id="adDisplay"></div>
+        <button class="btn btn-primary mt-2 hidden" id="continueBtn">Continue to Task</button>
     </div>
 
-    <!-- Task List (same as before) -->
     <div class="buy-skins">
         <div class="boosters-title" style="padding: 0 1.25rem">
             <h2 class="select-none text-2xl">Tasks</h2>
         </div>
         
-        <!-- Task buttons... -->
+        <!-- Task 1 -->
+        <div class="task-button" id="task1" onclick="startTask('task1')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/youtube.png" width="50px" alt="YouTube">
+                </div>
+                <div class="ml-3">
+                    <h4>Youtube Task</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>500 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 2 -->
+        <div class="task-button" id="task2" onclick="startTask('task2')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/telegram.png" width="50px" alt="Telegram">
+                </div>
+                <div class="ml-3">
+                    <h4>Facebook Task</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/telegram.png" width="20px" class="m-r-25">
+                        <h5>500 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 3 -->
+        <div class="task-button" id="task3" onclick="startTask('task3')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/twitter.png" width="50px" alt="Twitter">
+                </div>
+                <div class="ml-3">
+                    <h4>Twitter Task</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/twitter.png" width="20px" class="m-r-25">
+                        <h5>300 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 4 -->
+        <div class="task-button" id="task4" onclick="startTask('task4')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/instagram.png" width="50px" alt="Instagram">
+                </div>
+                <div class="ml-3">
+                    <h4> Instagram Task </h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/instagram.png" width="20px" class="m-r-25">
+                        <h5>300 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 5 -->
+        <div class="task-button" id="task5" onclick="startTask('task5')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/website.png" width="50px" alt="Website">
+                </div>
+                <div class="ml-3">
+                    <h4>Web Task</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>200 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
     </div>
 
     <script>
@@ -223,8 +247,6 @@
         const completedTasks = {};
         let currentTaskId = null;
         const MAX_DAILY_TASKS = 50;
-        let countdownInterval;
-        let remainingSeconds = 15;
         
         // Initialize daily task system
         function initDailyTasks() {
@@ -272,30 +294,12 @@
             }
         }
         
-        // Start countdown timer
-        function startCountdown() {
-            remainingSeconds = 15;
-            document.getElementById('countdown').textContent = `Please wait: ${remainingSeconds} seconds`;
-            document.getElementById('continueBtn').disabled = true;
-            
-            countdownInterval = setInterval(() => {
-                remainingSeconds--;
-                document.getElementById('countdown').textContent = `Please wait: ${remainingSeconds} seconds`;
-                
-                if (remainingSeconds <= 0) {
-                    clearInterval(countdownInterval);
-                    document.getElementById('continueBtn').disabled = false;
-                    document.getElementById('countdown').textContent = "Ad complete! You may continue";
-                }
-            }, 1000);
-        }
-        
         // Function to start a task (show ad first)
         function startTask(taskId) {
             // Check daily task limit
             const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
             if (dailyCount >= MAX_DAILY_TASKS) {
-                alert("You've completed all daily tasks! Come back tomorrow for more.");
+                showAlert("You've completed all daily tasks! Come back tomorrow for more.");
                 return;
             }
             
@@ -304,34 +308,34 @@
             
             currentTaskId = taskId;
             
-            // Show ad overlay
-            document.getElementById('adOverlay').style.display = 'flex';
-            document.getElementById('adDisplay').innerHTML = '<div class="spinner"></div><p>Loading advertisement...</p>';
-            
-            // Start countdown
-            startCountdown();
+            // Show loading message
+            document.getElementById('adContainer').classList.remove('hidden');
+            document.getElementById('adDisplay').innerHTML = '<p>Loading ad...</p>';
             
             // Show rewarded interstitial ad
             show_9237110().then(() => {
-                // Ad loaded successfully
-                document.getElementById('adDisplay').innerHTML = '<p>Advertisement loaded. Please watch for 15 seconds.</p>';
+                // Ad watched successfully - show continue button
+                document.getElementById('continueBtn').classList.remove('hidden');
+                document.getElementById('adDisplay').innerHTML = '<p>Ad completed! Click continue to complete your task.</p>';
             }).catch((error) => {
-                // Ad failed to load
-                document.getElementById('adDisplay').innerHTML = '<p>Failed to load ad. Please try again.</p>';
-                clearInterval(countdownInterval);
+                // Ad failed or was closed
+                document.getElementById('adDisplay').innerHTML = '<p>Ad not completed. Please try again.</p>';
                 setTimeout(() => {
-                    document.getElementById('adOverlay').style.display = 'none';
+                    document.getElementById('adContainer').classList.add('hidden');
                 }, 2000);
             });
+            
+            // Set continue button action
+            document.getElementById('continueBtn').onclick = function() {
+                completeTask(currentTaskId);
+            };
         }
         
         // Function to complete a task
-        function completeTask() {
-            if (!currentTaskId) return;
-            
+        function completeTask(taskId) {
             // Mark task as completed
-            completedTasks[currentTaskId] = true;
-            const taskElement = document.getElementById(currentTaskId);
+            completedTasks[taskId] = true;
+            const taskElement = document.getElementById(taskId);
             taskElement.classList.add('completed');
             taskElement.querySelector('.status-icon').textContent = '✓';
             
@@ -341,12 +345,12 @@
             localStorage.setItem('dailyTaskCount', dailyCount);
             
             // Hide ad container
-            document.getElementById('adOverlay').style.display = 'none';
-            clearInterval(countdownInterval);
+            document.getElementById('adContainer').classList.add('hidden');
+            document.getElementById('continueBtn').classList.add('hidden');
             
             // Calculate reward based on task
             let reward = 0;
-            switch(currentTaskId) {
+            switch(taskId) {
                 case 'task1': reward = 500; break;
                 case 'task2': reward = 500; break;
                 case 'task3': reward = 300; break;
@@ -366,36 +370,57 @@
             updateDailyProgress();
             
             // Show completion message
-            alert(`Task completed! You earned ${reward} coins! (${dailyCount}/${MAX_DAILY_TASKS} today)`);
+            showAlert(`Task completed! You earned ${reward} coins! (${dailyCount}/${MAX_DAILY_TASKS} today)`);
             
             // Reset current task
             currentTaskId = null;
+        }
+        
+        // Custom alert function to avoid showing page URL
+        function showAlert(message) {
+            const alertBox = document.createElement('div');
+            alertBox.style.position = 'fixed';
+            alertBox.style.top = '50%';
+            alertBox.style.left = '50%';
+            alertBox.style.transform = 'translate(-50%, -50%)';
+            alertBox.style.backgroundColor = '#1e293b';
+            alertBox.style.color = 'white';
+            alertBox.style.padding = '20px';
+            alertBox.style.borderRadius = '10px';
+            alertBox.style.zIndex = '1000';
+            alertBox.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)';
+            alertBox.style.textAlign = 'center';
+            alertBox.innerHTML = `
+                <p>${message}</p>
+                <button onclick="this.parentNode.remove()" style="margin-top: 15px; padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    OK
+                </button>
+            `;
+            document.body.appendChild(alertBox);
         }
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             initDailyTasks();
             
-            // Set up continue button
-            document.getElementById('continueBtn').addEventListener('click', completeTask);
-            
-            // Close button handler
-            document.getElementById('closeAdBtn').addEventListener('click', function() {
-                if (remainingSeconds > 0) {
-                    if (confirm("You haven't completed the ad viewing time. Are you sure you want to cancel?")) {
-                        document.getElementById('adOverlay').style.display = 'none';
-                        clearInterval(countdownInterval);
-                    }
-                } else {
-                    document.getElementById('adOverlay').style.display = 'none';
+            // Close ad container when clicking outside
+            document.getElementById('adContainer').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    document.getElementById('continueBtn').classList.add('hidden');
                 }
             });
             
-            // Close when clicking outside ad container
-            document.getElementById('adOverlay').addEventListener('click', function(e) {
-                if (e.target === this && remainingSeconds <= 0) {
-                    this.style.display = 'none';
-                }
+            // Also show interstitial ads occasionally
+            show_9237110({ 
+                type: 'inApp', 
+                inAppSettings: { 
+                    frequency: 1, 
+                    capping: 0.1, 
+                    interval: 15, 
+                    timeout: 5, 
+                    everyPage: false 
+                } 
             });
         });
     </script>

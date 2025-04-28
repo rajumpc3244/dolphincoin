@@ -50,6 +50,13 @@
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.1);
             text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
         }
         
         #adDisplay {
@@ -57,6 +64,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
         }
         
         .hidden {
@@ -74,6 +82,12 @@
         .btn-primary {
             background-color: #007bff;
             color: white;
+        }
+        
+        .btn-disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
         }
         
         .ml-3 { margin-left: 0.75rem; }
@@ -110,6 +124,23 @@
             font-size: 14px;
             margin-bottom: 15px;
         }
+        
+        .countdown-timer {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #ff5722;
+            font-weight: bold;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
     </style>
 </head>
 
@@ -145,10 +176,14 @@
     </div>
 
     <!-- Ad Container -->
+    <div class="overlay hidden" id="overlay"></div>
     <div class="ad-container hidden" id="adContainer">
         <h4>Watch this ad to complete your task</h4>
-        <div id="adDisplay"></div>
-        <button class="btn btn-primary mt-2 hidden" id="continueBtn">Continue to Task</button>
+        <div id="adDisplay">
+            <p>Loading ad...</p>
+            <div class="countdown-timer hidden" id="countdownTimer">15</div>
+        </div>
+        <button class="btn btn-primary mt-2 hidden" id="continueBtn" disabled>Continue to Task (15s)</button>
     </div>
 
     <div class="buy-skins">
@@ -247,6 +282,8 @@
         const completedTasks = {};
         let currentTaskId = null;
         const MAX_DAILY_TASKS = 50;
+        let countdownInterval;
+        let countdownSeconds = 15;
         
         // Initialize daily task system
         function initDailyTasks() {
@@ -307,35 +344,83 @@
             if (completedTasks[taskId]) return;
             
             currentTaskId = taskId;
+            countdownSeconds = 15;
+            
+            // Show overlay and ad container
+            document.getElementById('overlay').classList.remove('hidden');
+            document.getElementById('adContainer').classList.remove('hidden');
             
             // Show loading message
-            document.getElementById('adContainer').classList.remove('hidden');
             document.getElementById('adDisplay').innerHTML = '<p>Loading ad...</p>';
+            document.getElementById('countdownTimer').classList.add('hidden');
+            document.getElementById('continueBtn').classList.add('hidden');
             
-            // Show rewarded interstitial ad
+            // Start the ad
+            showAd();
+        }
+        
+        function showAd() {
+            // Show the ad and start countdown
             show_9237110().then(() => {
-                // Ad watched successfully - show continue button
-                document.getElementById('continueBtn').classList.remove('hidden');
-                document.getElementById('adDisplay').innerHTML = '<p>Ad completed! Click continue to complete your task.</p>';
+                // Ad loaded successfully - start countdown
+                startCountdown();
             }).catch((error) => {
-                // Ad failed or was closed
-                document.getElementById('adDisplay').innerHTML = '<p>Ad not completed. Please try again.</p>';
+                // Ad failed to load
+                document.getElementById('adDisplay').innerHTML = '<p>Ad failed to load. Please try again.</p>';
                 setTimeout(() => {
-                    document.getElementById('adContainer').classList.add('hidden');
+                    closeAdContainer();
                 }, 2000);
             });
+        }
+        
+        function startCountdown() {
+            // Show countdown timer
+            document.getElementById('adDisplay').innerHTML = `
+                <p>Please watch the ad for 15 seconds</p>
+                <div class="countdown-timer" id="countdownTimer">15</div>
+            `;
+            document.getElementById('countdownTimer').classList.remove('hidden');
             
-            // Set continue button action
-            document.getElementById('continueBtn').onclick = function() {
-                completeTask(currentTaskId);
-            };
+            // Show disabled continue button
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.classList.remove('hidden');
+            continueBtn.disabled = true;
+            continueBtn.textContent = `Continue to Task (${countdownSeconds}s)`;
+            
+            // Start countdown
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                countdownSeconds--;
+                continueBtn.textContent = `Continue to Task (${countdownSeconds}s)`;
+                document.getElementById('countdownTimer').textContent = countdownSeconds;
+                
+                if (countdownSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    continueBtn.disabled = false;
+                    continueBtn.textContent = 'Continue to Task';
+                    continueBtn.classList.remove('btn-disabled');
+                    continueBtn.classList.add('btn-primary');
+                }
+            }, 1000);
+        }
+        
+        function closeAdContainer() {
+            document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('adContainer').classList.add('hidden');
+            document.getElementById('continueBtn').classList.add('hidden');
+            clearInterval(countdownInterval);
         }
         
         // Function to complete a task
-        function completeTask(taskId) {
+        function completeTask() {
+            if (countdownSeconds > 0) {
+                alert("You must watch the ad for 15 seconds to complete the task!");
+                return;
+            }
+            
             // Mark task as completed
-            completedTasks[taskId] = true;
-            const taskElement = document.getElementById(taskId);
+            completedTasks[currentTaskId] = true;
+            const taskElement = document.getElementById(currentTaskId);
             taskElement.classList.add('completed');
             taskElement.querySelector('.status-icon').textContent = '✓';
             
@@ -344,13 +429,12 @@
             dailyCount++;
             localStorage.setItem('dailyTaskCount', dailyCount);
             
-            // Hide ad container
-            document.getElementById('adContainer').classList.add('hidden');
-            document.getElementById('continueBtn').classList.add('hidden');
+            // Close ad container
+            closeAdContainer();
             
             // Calculate reward based on task
             let reward = 0;
-            switch(taskId) {
+            switch(currentTaskId) {
                 case 'task1': reward = 500; break;
                 case 'task2': reward = 500; break;
                 case 'task3': reward = 300; break;
@@ -380,24 +464,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             initDailyTasks();
             
-            // Close ad container when clicking outside
-            document.getElementById('adContainer').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.add('hidden');
-                    document.getElementById('continueBtn').classList.add('hidden');
-                }
-            });
+            // Set continue button action
+            document.getElementById('continueBtn').onclick = completeTask;
             
-            // Also show interstitial ads occasionally
-            show_9237110({ 
-                type: 'inApp', 
-                inAppSettings: { 
-                    frequency: 1, 
-                    capping: 0.1, 
-                    interval: 15, 
-                    timeout: 5, 
-                    everyPage: false 
-                } 
+            // Close ad container when clicking overlay
+            document.getElementById('overlay').addEventListener('click', function() {
+                alert("You must complete the ad to finish the task!");
             });
         });
     </script>

@@ -202,18 +202,18 @@
       to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--secondary), 0 0 40px var(--secondary); }
     }
 
-    /* Points Section (Hidden by Default) */
-    #pointsSection {
-      display: none;
-      margin-top: 15px;
+    /* Task Points Section */
+    .task-points {
+      margin-top: -10px;
+      margin-bottom: 20px;
       padding: 15px;
       background: rgba(0, 247, 255, 0.05);
       border-radius: 10px;
       border: 1px dashed var(--accent);
     }
 
-    #pointsSection.show {
-      display: block;
+    .task-points input {
+      background: rgba(0, 247, 255, 0.1);
     }
 
     /* Responsive adjustments */
@@ -247,6 +247,12 @@
         <input type="text" id="userid" name="userid" placeholder="Enter your user ID" required>
       </div>
 
+      <!-- Task Points Section -->
+      <div class="task-points">
+        <label for="taskPoints">Your Total Task Points</label>
+        <input type="text" id="taskPoints" name="taskPoints" placeholder="e.g., 2500 Points" readonly>
+      </div>
+
       <div class="form-group">
         <label for="amount">Amount (৳)</label>
         <input type="number" id="amount" name="amount" placeholder="Minimum ৳500" required>
@@ -268,28 +274,15 @@
         <input type="text" id="number" name="number" placeholder="01XXXXXXXXX" required>
       </div>
 
-      <!-- Points Section (Visible only for Bank Transfer) -->
-      <div id="pointsSection">
-        <label for="points">Your Total Points</label>
-        <input type="text" id="points" name="points" placeholder="e.g., 1500 Points" readonly>
-      </div>
-
       <button type="submit">REQUEST WITHDRAWAL</button>
       <p id="status"></p>
     </form>
   </div>
 
   <script>
-    // Show/hide points section based on payment method
-    document.getElementById("method").addEventListener("change", function() {
-      const pointsSection = document.getElementById("pointsSection");
-      if (this.value === "bank") {
-        pointsSection.classList.add("show");
-        // Simulate fetching points (replace with actual logic)
-        document.getElementById("points").value = "1500 Points";
-      } else {
-        pointsSection.classList.remove("show");
-      }
+    // Simulate fetching task points (replace with actual logic)
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("taskPoints").value = "2500 Points";
     });
 
     // Form submission
@@ -308,6 +301,9 @@
         statusElement.style.borderColor = "#00ff64";
         statusElement.style.color = "#00ff64";
         document.getElementById("withdrawForm").reset();
+        
+        // Reset task points after submission
+        document.getElementById("taskPoints").value = "2500 Points";
         
         // Hide status after 5 seconds
         setTimeout(() => {

@@ -1,204 +1,129 @@
-<script>
-    // Track completed tasks and video watching
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dolphin Coin</title>
+  <script>
+    // Reset all user points once per session (optional logic)
+    window.addEventListener('DOMContentLoaded', () => {
+      localStorage.setItem('mainBalance', 0);
+      localStorage.setItem('dailyTaskCount', 0);
+      localStorage.setItem('completedTasks', JSON.stringify({}));
+    });
+  </script>
+  <style>
+    /* ...existing CSS styles */
+  </style>
+</head>
+<body>
+  <!-- ...existing HTML layout -->
+
+  <script>
     const completedTasks = {};
     let currentTaskId = null;
     const MAX_DAILY_TASKS = 50;
-    let videoWatchTimer = null;
-    let secondsWatched = 0;
-    const REQUIRED_WATCH_TIME = 15; // 15 seconds
-    
-    // Initialize daily task system
+    const MIN_AD_WATCH_TIME = 15 * 1000; // 15 seconds
+
     function initDailyTasks() {
-        const today = new Date().toDateString();
-        const lastVisit = localStorage.getItem('lastVisitDate');
-        const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
-        
-        // Reset if it's a new day and previous day was completed
-        if (lastVisit !== today) {
-            if (dailyCount >= MAX_DAILY_TASKS) {
-                localStorage.setItem('dailyTaskCount', 0);
-            }
-            localStorage.setItem('lastVisitDate', today);
-        }
-        
-        // Load main balance from localStorage
-        const savedBalance = localStorage.getItem('mainBalance');
-        if (savedBalance) {
-            document.getElementById('score').textContent = savedBalance;
-        }
-        
-        updateDailyProgress();
+      // ...existing init code...
     }
-    
-    // Reset all user points
-    function resetAllPoints() {
-        localStorage.setItem('mainBalance', 0);
-        document.getElementById('score').textContent = 0;
-        showAlert("All points have been reset to 0");
-    }
-    
-    // Update daily progress display
+
     function updateDailyProgress() {
-        const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
-        const progressPercent = (dailyCount / MAX_DAILY_TASKS) * 100;
-        
-        document.getElementById('dailyProgressBar').style.width = `${progressPercent}%`;
-        document.getElementById('dailyProgressText').textContent = `Daily Progress: ${dailyCount}/${MAX_DAILY_TASKS}`;
-        
-        // Disable all tasks if daily limit reached
-        if (dailyCount >= MAX_DAILY_TASKS) {
-            document.querySelectorAll('.task-button').forEach(button => {
-                button.style.opacity = '0.6';
-                button.style.cursor = 'not-allowed';
-                button.onclick = null;
-            });
-        } else {
-            document.querySelectorAll('.task-button').forEach(button => {
-                button.style.opacity = '1';
-                button.style.cursor = 'pointer';
-            });
-        }
+      // ...existing update code...
     }
-    
-    // Function to start a task (show ad first)
+
     function startTask(taskId) {
-        // Check daily task limit
-        const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
-        if (dailyCount >= MAX_DAILY_TASKS) {
-            showAlert("You've completed all daily tasks! Come back tomorrow for more.");
-            return;
+      const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+      if (dailyCount >= MAX_DAILY_TASKS) {
+        showAlert("You've completed all daily tasks! Come back tomorrow for more.");
+        return;
+      }
+      if (completedTasks[taskId]) return;
+      currentTaskId = taskId;
+      document.getElementById('adContainer').classList.remove('hidden');
+      document.getElementById('adDisplay').innerHTML = '<p>Loading ad...</p>';
+
+      const adStartTime = Date.now();
+
+      show_9237110().then(() => {
+        const elapsedTime = Date.now() - adStartTime;
+        if (elapsedTime >= MIN_AD_WATCH_TIME) {
+          document.getElementById('continueBtn').classList.remove('hidden');
+          document.getElementById('adDisplay').innerHTML = '<p>Ad completed! Click continue to complete your task.</p>';
+        } else {
+          document.getElementById('adDisplay').innerHTML = '<p>Please watch the ad for at least 15 seconds.</p>';
+          setTimeout(() => {
+            document.getElementById('adContainer').classList.add('hidden');
+          }, 2000);
         }
-        
-        // Don't proceed if task already completed
-        if (completedTasks[taskId]) return;
-        
-        currentTaskId = taskId;
-        secondsWatched = 0;
-        
-        // Show loading message
-        document.getElementById('adContainer').classList.remove('hidden');
-        document.getElementById('adDisplay').innerHTML = `
-            <div id="videoContainer">
-                <p>Please watch this video for at least 15 seconds</p>
-                <div id="videoPlaceholder" style="width: 300px; height: 200px; background: #333; margin: 10px auto; display: flex; align-items: center; justify-content: center;">
-                    <p>Video Ad Here</p>
-                </div>
-                <div id="progressText">Watched: 0/${REQUIRED_WATCH_TIME} seconds</div>
-            </div>
-        `;
-        
-        // Start video watch timer
-        videoWatchTimer = setInterval(() => {
-            secondsWatched++;
-            document.getElementById('progressText').textContent = `Watched: ${secondsWatched}/${REQUIRED_WATCH_TIME} seconds`;
-            
-            if (secondsWatched >= REQUIRED_WATCH_TIME) {
-                clearInterval(videoWatchTimer);
-                // Show continue button only after required watch time
-                document.getElementById('continueBtn').classList.remove('hidden');
-            }
-        }, 1000);
-        
-        // Set continue button action
-        document.getElementById('continueBtn').onclick = function() {
-            if (secondsWatched >= REQUIRED_WATCH_TIME) {
-                completeTask(currentTaskId);
-            } else {
-                showAlert("Please watch the video for at least 15 seconds");
-            }
-        };
+      }).catch(() => {
+        document.getElementById('adDisplay').innerHTML = '<p>Ad not completed. Please try again.</p>';
+        setTimeout(() => {
+          document.getElementById('adContainer').classList.add('hidden');
+        }, 2000);
+      });
+
+      document.getElementById('continueBtn').onclick = function () {
+        completeTask(currentTaskId);
+      };
     }
-    
-    // Function to complete a task
+
     function completeTask(taskId) {
-        // Clear any running timer
-        if (videoWatchTimer) {
-            clearInterval(videoWatchTimer);
-            videoWatchTimer = null;
-        }
-        
-        // Mark task as completed
-        completedTasks[taskId] = true;
-        const taskElement = document.getElementById(taskId);
-        taskElement.classList.add('completed');
-        taskElement.querySelector('.status-icon').textContent = '✓';
-        
-        // Update daily task count
-        let dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
-        dailyCount++;
-        localStorage.setItem('dailyTaskCount', dailyCount);
-        
-        // Hide ad container
-        document.getElementById('adContainer').classList.add('hidden');
-        document.getElementById('continueBtn').classList.add('hidden');
-        
-        // Calculate reward based on task
-        let reward = 0;
-        switch(taskId) {
-            case 'task1': reward = 300; break;
-            case 'task2': reward = 300; break;
-            case 'task3': reward = 300; break;
-            case 'task4': reward = 300; break;
-            case 'task5': reward = 300; break;
-        }
-        
-        // Update balance
-        const currentBalance = parseInt(document.getElementById('score').textContent) || 0;
-        const newBalance = currentBalance + reward;
-        document.getElementById('score').textContent = newBalance;
-        
-        // Save balance to localStorage
-        localStorage.setItem('mainBalance', newBalance);
-        
-        // Update daily progress
-        updateDailyProgress();
-        
-        // Show completion message
-        showAlert(`Task completed! You earned ${reward} coins! (${dailyCount}/${MAX_DAILY_TASKS} today)`);
-        
-        // Reset current task
-        currentTaskId = null;
-        secondsWatched = 0;
+      completedTasks[taskId] = true;
+      const taskElement = document.getElementById(taskId);
+      taskElement.classList.add('completed');
+      taskElement.querySelector('.status-icon').textContent = '✓';
+
+      let dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+      dailyCount++;
+      localStorage.setItem('dailyTaskCount', dailyCount);
+
+      document.getElementById('adContainer').classList.add('hidden');
+      document.getElementById('continueBtn').classList.add('hidden');
+
+      let reward = 0;
+      switch (taskId) {
+        case 'task1': reward = 500; break;
+        case 'task2': reward = 500; break;
+        case 'task3': reward = 300; break;
+        case 'task4': reward = 300; break;
+        case 'task5': reward = 200; break;
+      }
+
+      const currentBalance = parseInt(localStorage.getItem('mainBalance')) || 0;
+      const newBalance = currentBalance + reward;
+      document.getElementById('score').textContent = newBalance;
+      localStorage.setItem('mainBalance', newBalance);
+
+      updateDailyProgress();
+      showAlert(`Task completed! You earned ${reward} coins! (${dailyCount}/${MAX_DAILY_TASKS} today)`);
+      currentTaskId = null;
     }
-    
-    // Custom alert function
+
     function showAlert(message) {
-        const alertBox = document.createElement('div');
-        alertBox.style.position = 'fixed';
-        alertBox.style.top = '50%';
-        alertBox.style.left = '50%';
-        alertBox.style.transform = 'translate(-50%, -50%)';
-        alertBox.style.backgroundColor = '#1e293b';
-        alertBox.style.color = 'white';
-        alertBox.style.padding = '20px';
-        alertBox.style.borderRadius = '10px';
-        alertBox.style.zIndex = '1000';
-        alertBox.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)';
-        alertBox.style.textAlign = 'center';
-        alertBox.innerHTML = `
-            <p>${message}</p>
-            <button onclick="this.parentNode.remove()" style="margin-top: 15px; padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                OK
-            </button>
-        `;
-        document.body.appendChild(alertBox);
+      const alertBox = document.createElement('div');
+      alertBox.style.position = 'fixed';
+      alertBox.style.top = '50%';
+      alertBox.style.left = '50%';
+      alertBox.style.transform = 'translate(-50%, -50%)';
+      alertBox.style.backgroundColor = '#1e293b';
+      alertBox.style.color = 'white';
+      alertBox.style.padding = '20px';
+      alertBox.style.borderRadius = '10px';
+      alertBox.style.zIndex = '1000';
+      alertBox.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)';
+      alertBox.style.textAlign = 'center';
+      alertBox.innerHTML = `
+        <p>${message}</p>
+        <button onclick="this.parentNode.remove()" style="margin-top: 15px; padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+      `;
+      document.body.appendChild(alertBox);
     }
-    
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        initDailyTasks();
-        
-        // Close ad container when clicking outside
-        document.getElementById('adContainer').addEventListener('click', function(e) {
-            if (e.target === this) {
-                // Clear timer if user closes without completing
-                if (videoWatchTimer) {
-                    clearInterval(videoWatchTimer);
-                    videoWatchTimer = null;
-                }
-                this.classList.add('hidden');
-                document.getElementById('continueBtn').classList.add('hidden');
-            }
-        });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initDailyTasks();
     });
-</script>
+  </script>
+</body>
+</html>

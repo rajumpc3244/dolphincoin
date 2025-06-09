@@ -1,129 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dolphin Coin</title>
-  <script>
-    // Reset all user points once per session (optional logic)
-    window.addEventListener('DOMContentLoaded', () => {
-      localStorage.setItem('mainBalance', 0);
-      localStorage.setItem('dailyTaskCount', 0);
-      localStorage.setItem('completedTasks', JSON.stringify({}));
-    });
-  </script>
-  <style>
-    /* ...existing CSS styles */
-  </style>
-</head>
-<body>
-  <!-- ...existing HTML layout -->
-
-  <script>
-    const completedTasks = {};
-    let currentTaskId = null;
-    const MAX_DAILY_TASKS = 50;
-    const MIN_AD_WATCH_TIME = 15 * 1000; // 15 seconds
-
-    function initDailyTasks() {
-      // ...existing init code...
-    }
-
-    function updateDailyProgress() {
-      // ...existing update code...
-    }
-
-    function startTask(taskId) {
-      const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
-      if (dailyCount >= MAX_DAILY_TASKS) {
-        showAlert("You've completed all daily tasks! Come back tomorrow for more.");
-        return;
-      }
-      if (completedTasks[taskId]) return;
-      currentTaskId = taskId;
-      document.getElementById('adContainer').classList.remove('hidden');
-      document.getElementById('adDisplay').innerHTML = '<p>Loading ad...</p>';
-
-      const adStartTime = Date.now();
-
-      show_9237110().then(() => {
-        const elapsedTime = Date.now() - adStartTime;
-        if (elapsedTime >= MIN_AD_WATCH_TIME) {
-          document.getElementById('continueBtn').classList.remove('hidden');
-          document.getElementById('adDisplay').innerHTML = '<p>Ad completed! Click continue to complete your task.</p>';
-        } else {
-          document.getElementById('adDisplay').innerHTML = '<p>Please watch the ad for at least 15 seconds.</p>';
-          setTimeout(() => {
-            document.getElementById('adContainer').classList.add('hidden');
-          }, 2000);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolphin Coin</title>
+    <link rel="stylesheet" href="./assets/css/style-2.css">
+    <link rel="stylesheet" href="./assets/css/responsive-1.css">
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    <!-- Monetag Ads Script -->
+    <script src='//whephiwums.com/sdk.js' data-zone='9237110' data-sdk='show_9237110'></script>
+    <style>
+        /* Your existing styles... */
+        
+        .task-button {
+            border: 2px solid aqua;
+            border-radius: 1em;
+            margin: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-      }).catch(() => {
-        document.getElementById('adDisplay').innerHTML = '<p>Ad not completed. Please try again.</p>';
-        setTimeout(() => {
-          document.getElementById('adContainer').classList.add('hidden');
-        }, 2000);
-      });
+        
+        .task-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .task-button.completed {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .task-button.completed h4 {
+            color: #4CAF50;
+        }
+        
+        .task-button.completed h5 {
+            color: #4CAF50;
+        }
+        
+        .ad-container {
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        #adDisplay {
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .ml-3 { margin-left: 0.75rem; }
+        .ml-4 { margin-left: 1rem; }
+        .mr-4 { margin-right: 1rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .m-r-25 { margin-right: 25px; }
+        .p-4 { padding: 1rem; }
+        .bg-slate-900 { background-color: #1e293b; }
+        .rounded-3xl { border-radius: 1.5rem; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .select-none { user-select: none; }
+        .text-center { text-align: center; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        
+        /* New styles for daily progress */
+        .daily-progress {
+            background: rgba(0, 0, 0, 0.2);
+            height: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffaa, #00aaff);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
 
-      document.getElementById('continueBtn').onclick = function () {
-        completeTask(currentTaskId);
-      };
-    }
+<body class="boost">
+    <div class="haeder">
+        <a href="index.html">
+            <svg width="25px" height="25px" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 11.9299H2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M8.00009 19L2.84009 14C2.5677 13.7429 2.35071 13.433 2.20239 13.0891C2.05407 12.7452 1.97754 12.3745 1.97754 12C1.97754 11.6255 2.05407 11.2548 2.20239 10.9109C2.35071 10.567 2.5677 10.2571 2.84009 10L8.00009 5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </a>
+    </div>
 
-    function completeTask(taskId) {
-      completedTasks[taskId] = true;
-      const taskElement = document.getElementById(taskId);
-      taskElement.classList.add('completed');
-      taskElement.querySelector('.status-icon').textContent = '✓';
+    <div class="user-balance ml-4 mr-4 bg-slate-900 rounded-3xl shadow-lg p-4 mt-2">
+        <div class="balance-coins">
+            <img src="./assets/images/pc.png" width="50px" alt="">
+            <span id="score">0</span>
+        </div>
+        <div class="balance-title">
+            <span class="select-none text-center">Complete tasks to earn coins</span>
+            <hr class="mt-2">
+        </div>
+    </div>
 
-      let dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
-      dailyCount++;
-      localStorage.setItem('dailyTaskCount', dailyCount);
+    <!-- Daily Progress -->
+    <div class="ml-4 mr-4 bg-slate-900 rounded-3xl shadow-lg p-4 mt-2">
+        <div class="progress-text">
+            <span id="dailyProgressText">Daily Progress: 0/50</span>
+        </div>
+        <div class="daily-progress">
+            <div class="progress-bar" id="dailyProgressBar"></div>
+        </div>
+    </div>
 
-      document.getElementById('adContainer').classList.add('hidden');
-      document.getElementById('continueBtn').classList.add('hidden');
+    <!-- Ad Container -->
+    <div class="ad-container hidden" id="adContainer">
+        <h4>Watch this ad to complete your task</h4>
+        <div id="adDisplay"></div>
+        <button class="btn btn-primary mt-2 hidden" id="continueBtn">Continue to Task</button>
+    </div>
 
-      let reward = 0;
-      switch (taskId) {
-        case 'task1': reward = 500; break;
-        case 'task2': reward = 500; break;
-        case 'task3': reward = 300; break;
-        case 'task4': reward = 300; break;
-        case 'task5': reward = 200; break;
-      }
+    <div class="buy-skins">
+        <div class="boosters-title" style="padding: 0 1.25rem">
+            <h2 class="select-none text-2xl">Tasks</h2>
+        </div>
+        
+        <!-- Task 1 -->
+        <div class="task-button" id="task1" onclick="startTask('task1')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/youtube.png" width="50px" alt="YouTube">
+                </div>
+                <div class="ml-3">
+                    <h4>Youtube Task</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>500 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 2 -->
+        <div class="task-button" id="task2" onclick="startTask('task2')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/telegram.png" width="50px" alt="Telegram">
+                </div>
+                <div class="ml-3">
+                    <h4>Facebook Task</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/telegram.png" width="20px" class="m-r-25">
+                        <h5>500 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 3 -->
+        <div class="task-button" id="task3" onclick="startTask('task3')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/twitter.png" width="50px" alt="Twitter">
+                </div>
+                <div class="ml-3">
+                    <h4>Twitter Task</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/twitter.png" width="20px" class="m-r-25">
+                        <h5>300 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 4 -->
+        <div class="task-button" id="task4" onclick="startTask('task4')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/instagram.png" width="50px" alt="Instagram">
+                </div>
+                <div class="ml-3">
+                    <h4> Instagram Task </h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/instagram.png" width="20px" class="m-r-25">
+                        <h5>300 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+        
+        <!-- Task 5 -->
+        <div class="task-button" id="task5" onclick="startTask('task5')">
+            <div class="boosters-button-detail">
+                <div class="boosters-button-image">
+                    <img src="./assets/images/website.png" width="50px" alt="Website">
+                </div>
+                <div class="ml-3">
+                    <h4>Web Task</h4>
+                    <div class="boosters-button-data">
+                        <img src="./assets/images/pc.png" width="20px" class="m-r-25">
+                        <h5>200 coins</h5>
+                    </div>
+                </div>
+            </div>
+            <span class="status-icon">▶</span>
+        </div>
+    </div>
 
-      const currentBalance = parseInt(localStorage.getItem('mainBalance')) || 0;
-      const newBalance = currentBalance + reward;
-      document.getElementById('score').textContent = newBalance;
-      localStorage.setItem('mainBalance', newBalance);
-
-      updateDailyProgress();
-      showAlert(`Task completed! You earned ${reward} coins! (${dailyCount}/${MAX_DAILY_TASKS} today)`);
-      currentTaskId = null;
-    }
-
-    function showAlert(message) {
-      const alertBox = document.createElement('div');
-      alertBox.style.position = 'fixed';
-      alertBox.style.top = '50%';
-      alertBox.style.left = '50%';
-      alertBox.style.transform = 'translate(-50%, -50%)';
-      alertBox.style.backgroundColor = '#1e293b';
-      alertBox.style.color = 'white';
-      alertBox.style.padding = '20px';
-      alertBox.style.borderRadius = '10px';
-      alertBox.style.zIndex = '1000';
-      alertBox.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)';
-      alertBox.style.textAlign = 'center';
-      alertBox.innerHTML = `
-        <p>${message}</p>
-        <button onclick="this.parentNode.remove()" style="margin-top: 15px; padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
-      `;
-      document.body.appendChild(alertBox);
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      initDailyTasks();
-    });
-  </script>
+    <script>
+        // Track completed tasks
+        const completedTasks = {};
+        let currentTaskId = null;
+        const MAX_DAILY_TASKS = 50;
+        
+        // Initialize daily task system
+        function initDailyTasks() {
+            const today = new Date().toDateString();
+            const lastVisit = localStorage.getItem('lastVisitDate');
+            const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+            
+            // Reset if it's a new day and previous day was completed
+            if (lastVisit !== today) {
+                if (dailyCount >= MAX_DAILY_TASKS) {
+                    localStorage.setItem('dailyTaskCount', 0);
+                }
+                localStorage.setItem('lastVisitDate', today);
+            }
+            
+            // Load main balance from localStorage
+            const savedBalance = localStorage.getItem('mainBalance');
+            if (savedBalance) {
+                document.getElementById('score').textContent = savedBalance;
+            }
+            
+            updateDailyProgress();
+        }
+        
+        // Update daily progress display
+        function updateDailyProgress() {
+            const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+            const progressPercent = (dailyCount / MAX_DAILY_TASKS) * 100;
+            
+            document.getElementById('dailyProgressBar').style.width = `${progressPercent}%`;
+            document.getElementById('dailyProgressText').textContent = `Daily Progress: ${dailyCount}/${MAX_DAILY_TASKS}`;
+            
+            // Disable all tasks if daily limit reached
+            if (dailyCount >= MAX_DAILY_TASKS) {
+                document.querySelectorAll('.task-button').forEach(button => {
+                    button.style.opacity = '0.6';
+                    button.style.cursor = 'not-allowed';
+                    button.onclick = null;
+                });
+            } else {
+                document.querySelectorAll('.task-button').forEach(button => {
+                    button.style.opacity = '1';
+                    button.style.cursor = 'pointer';
+                });
+            }
+        }
+        
+        // Function to start a task (show ad first)
+        function startTask(taskId) {
+            // Check daily task limit
+            const dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+            if (dailyCount >= MAX_DAILY_TASKS) {
+                showAlert("You've completed all daily tasks! Come back tomorrow for more.");
+                return;
+            }
+            
+            // Don't proceed if task already completed
+            if (completedTasks[taskId]) return;
+            
+            currentTaskId = taskId;
+            
+            // Show loading message
+            document.getElementById('adContainer').classList.remove('hidden');
+            document.getElementById('adDisplay').innerHTML = '<p>Loading ad...</p>';
+            
+            // Show rewarded interstitial ad
+            show_9237110().then(() => {
+                // Ad watched successfully - show continue button
+                document.getElementById('continueBtn').classList.remove('hidden');
+                document.getElementById('adDisplay').innerHTML = '<p>Ad completed! Click continue to complete your task.</p>';
+            }).catch((error) => {
+                // Ad failed or was closed
+                document.getElementById('adDisplay').innerHTML = '<p>Ad not completed. Please try again.</p>';
+                setTimeout(() => {
+                    document.getElementById('adContainer').classList.add('hidden');
+                }, 2000);
+            });
+            
+            // Set continue button action
+            document.getElementById('continueBtn').onclick = function() {
+                completeTask(currentTaskId);
+            };
+        }
+        
+        // Function to complete a task
+        function completeTask(taskId) {
+            // Mark task as completed
+            completedTasks[taskId] = true;
+            const taskElement = document.getElementById(taskId);
+            taskElement.classList.add('completed');
+            taskElement.querySelector('.status-icon').textContent = '✓';
+            
+            // Update daily task count
+            let dailyCount = parseInt(localStorage.getItem('dailyTaskCount')) || 0;
+            dailyCount++;
+            localStorage.setItem('dailyTaskCount', dailyCount);
+            
+            // Hide ad container
+            document.getElementById('adContainer').classList.add('hidden');
+            document.getElementById('continueBtn').classList.add('hidden');
+            
+            // Calculate reward based on task
+            let reward = 0;
+            switch(taskId) {
+                case 'task1': reward = 300; break;
+                case 'task2': reward = 300; break;
+                case 'task3': reward = 300; break;
+                case 'task4': reward = 300; break;
+                case 'task5': reward = 300; break;
+            }
+            
+            // Update balance
+            const currentBalance = parseInt(document.getElementById('score').textContent) || 0;
+            const newBalance = currentBalance + reward;
+            document.getElementById('score').textContent = newBalance;
+            
+            // Save balance to localStorage
+            localStorage.setItem('mainBalance', newBalance);
+            
+            // Update daily progress
+            updateDailyProgress();
+            
+            // Show completion message
+            showAlert(`Task completed! You earned ${reward} coins! (${dailyCount}/${MAX_DAILY_TASKS} today)`);
+            
+            // Reset current task
+            currentTaskId = null;
+        }
+        
+        // Custom alert function to avoid showing page URL
+        function showAlert(message) {
+            const alertBox = document.createElement('div');
+            alertBox.style.position = 'fixed';
+            alertBox.style.top = '50%';
+            alertBox.style.left = '50%';
+            alertBox.style.transform = 'translate(-50%, -50%)';
+            alertBox.style.backgroundColor = '#1e293b';
+            alertBox.style.color = 'white';
+            alertBox.style.padding = '20px';
+            alertBox.style.borderRadius = '10px';
+            alertBox.style.zIndex = '1000';
+            alertBox.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)';
+            alertBox.style.textAlign = 'center';
+            alertBox.innerHTML = `
+                <p>${message}</p>
+                <button onclick="this.parentNode.remove()" style="margin-top: 15px; padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    OK
+                </button>
+            `;
+            document.body.appendChild(alertBox);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initDailyTasks();
+            
+            // Close ad container when clicking outside
+            document.getElementById('adContainer').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    document.getElementById('continueBtn').classList.add('hidden');
+                }
+            });
+            
+            // Also show interstitial ads occasionally
+            show_9237110({ 
+                type: 'inApp', 
+                inAppSettings: { 
+                    frequency: 1, 
+                    capping: 0.1, 
+                    interval: 15, 
+                    timeout: 5, 
+                    everyPage: false 
+                } 
+            });
+        });
+    </script>
 </body>
 </html>
